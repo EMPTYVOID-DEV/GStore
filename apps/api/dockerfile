@@ -1,0 +1,23 @@
+FROM oven/bun:1-alpine AS base
+
+WORKDIR /app
+
+RUN bun i -g pnpm
+
+RUN apk update && apk upgrade && apk add --no-cache ffmpeg nodejs
+
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install --frozen-lockfile --prod
+
+COPY . .
+
+RUN pnpm run build
+
+# for migrations
+RUN pnpm install -D drizzle-kit@latest 
+
+RUN pnpm install drizzle-orm@latest
+
+CMD [ "pnpm", "run", "start" ]
+

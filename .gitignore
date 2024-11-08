@@ -1,0 +1,29 @@
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# dotenv environment variables file
+.env
+.env.*
+!.env.example
+
+# SvelteKit build output
+.svelte-kit/
+
+# build
+dist/
+build/
+
+# MacOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+
+# Editor files
+.vscode/
+

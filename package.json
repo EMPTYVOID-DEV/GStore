@@ -1,0 +1,21 @@
+{
+  "name": "main",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "api-dev": "pnpm --filter @g-store/api dev",
+    "api-build": "pnpm --filter @g-store/api build",
+    "web-dev": "pnpm --filter @g-store/web dev",
+    "web-build": "pnpm --filter @g-store/web build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "pnpm": ">=9"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
