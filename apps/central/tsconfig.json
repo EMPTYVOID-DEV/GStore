@@ -1,0 +1,42 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"module": "es2020",
+		"lib": ["es2020", "DOM.Iterable"],
+		"target": "es2019",
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": false,
+		"baseUrl": ".",
+		"allowJs": true,
+		"checkJs": false,
+		"paths": {
+			"$global": ["./src/lib/global"],
+			"$global/*": ["src/lib/global/*"],
+			"$client": ["./src/lib/client"],
+			"$client/*": ["src/lib/client/*"],
+			"$server": ["./src/lib/server"],
+			"$server/*": ["src/lib/server/*"],
+			"$assets/*": ["src/lib/assets/*"],
+			"$assets": ["./src/lib/assets"],
+			"$lib/*": ["src/lib/*"],
+			"$lib": ["./src/lib"],
+			"$/*": ["./src/*"],
+			"$app": ["./node_modules/@sveltejs/kit/types"],
+			"$app/*": ["./node_modules/@sveltejs/kit/types/ambient.d.ts"]
+		}
+	},
+	"include": [
+		"src/**/*.d.ts",
+		"src/**/*.js",
+		"src/**/*.ts",
+		"src/**/*.svelte",
+		".svelte-kit/ambient.d.ts",
+		"drizzle.config.ts"
+	]
+}
