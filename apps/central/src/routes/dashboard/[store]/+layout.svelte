@@ -29,7 +29,7 @@
 <style>
 	.store {
 		width: 100svw;
-		height: 100svh;
+		min-height: 100svh;
 		display: flex;
 		flex-direction: column;
 		background: var(--backgroundColor);

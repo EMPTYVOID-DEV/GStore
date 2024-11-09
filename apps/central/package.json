@@ -36,6 +36,7 @@
 		"@node-rs/argon2": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"bits-ui": "^0.21.16",
 		"drizzle-orm": "^0.36.1",
 		"nanoid": "^5.0.7",
 		"nodemailer": "^6.9.16",

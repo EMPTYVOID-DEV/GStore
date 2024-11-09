@@ -1,0 +1,29 @@
+:root {
+  --primaryColor: #3498db;
+  --secondaryColor: #e74c3c;
+  --backgroundColor: #ffffff;
+  --foregroundColor: #1a1a1a;
+  --dangerColor: #ff0000;
+  --successColor: #27cf22;
+  --mutedColor: #505050;
+  --h1: clamp(2rem, calc(2rem + ((1vw - 0.48rem) * 0.9722)), 2.5rem);
+  --h2: clamp(1.725rem, calc(1.725rem + ((1vw - 0.48rem) * 0.9722)), 2rem);
+  --h3: clamp(1.5rem, calc(1.5rem + ((1vw - 0.48rem) * 0.9722)), 1.725rem);
+  --h4: clamp(1.275rem, calc(1.275rem + ((1vw - 0.48rem) * 0.3472)), 1.5rem);
+  --body: clamp(1rem, calc(1rem + ((1vw - 0.48rem) * 0.1736)), 1.275rem);
+  --small: clamp(
+    0.875rem,
+    calc(0.875remrem + ((1vw - 0.48rem) * 0.1736)),
+    1rem
+  );
+  --border-radius: 0.3rem;
+  --bodyFont: Verdana, Geneva, Tahoma, sans-serif;
+  --headerFont: Helvetica, sans-serif;
+}
+
+/* These global styles are just standard now */
+:not(dialog) {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

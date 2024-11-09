@@ -62,6 +62,7 @@ export function setSessionTokenCookie(cookies: Cookies, token: string, expiresAt
 		httpOnly: true,
 		sameSite: 'lax',
 		expires: expiresAt,
+		secure: !dev,
 		path: '/'
 	});
 }
@@ -82,12 +83,6 @@ export async function invalidateSession(sessionId: string) {
 export async function createSessionWrapper(cookies: Cookies, userId: string) {
 	const token = generateSessionToken();
 	const expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+	setSessionTokenCookie(cookies, token, expirationDate);
 	await createSession(token, userId, expirationDate);
-	cookies.set('session', token, {
-		expires: expirationDate,
-		secure: !dev,
-		path: '/',
-		httpOnly: true,
-		sameSite: 'lax'
-	});
 }

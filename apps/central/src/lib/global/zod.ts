@@ -26,6 +26,10 @@ export const storeNameSchema = z
 	.string()
 	.min(3, { message: 'Store name must have at least three letters.' });
 
+export const keyNameSchema = z
+	.string()
+	.min(3, { message: 'Key name must have at least three letters.' });
+
 export function getValidator(schema: ZodSchema): (text: string) => ActionStatus {
 	return (text: string) => {
 		const parseResult = schema.safeParse(text);
