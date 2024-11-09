@@ -38,7 +38,8 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.25rem;
-		width: fit-content;
+		min-width: max-content;
+		width: var(--width, fit-content);
 		padding-inline: var(--padding-inline, 1rem);
 		padding-block: var(--padding-block, 0.5rem);
 		cursor: pointer;
@@ -52,7 +53,7 @@
 		color: var(--backgroundColor);
 		font-family: var(--bodyFont);
 		font-size: var(--body);
-		font-weight: 600;
+		font-weight: 700;
 	}
 	button :global(svg) {
 		width: 1.25rem;

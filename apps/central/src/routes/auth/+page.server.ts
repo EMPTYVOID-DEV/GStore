@@ -2,7 +2,7 @@ import { db } from '$server/database/db';
 import { keyTable } from '$server/database/schema';
 import { createSessionWrapper } from '$server/utils/auth';
 import { insertUser } from '$server/utils/database';
-import type { Key, User } from '$server/types.server';
+import type { Key, User } from '$global/types.global';
 import { getValidator, emailSchema, passwordSchema, usernameSchema } from '$global/zod';
 import { type Actions, redirect } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
@@ -64,7 +64,7 @@ export const actions: Actions = {
 		if (!isValid) return fail(403, { message: 'The password is not correct.' });
 		if (userKey.verified) {
 			await createSessionWrapper(cookies, userKey.userId);
-			redirect(302, '/stores');
+			redirect(302, '/dashboard');
 		}
 		redirect(302, `/auth/verify/${email}`);
 	}

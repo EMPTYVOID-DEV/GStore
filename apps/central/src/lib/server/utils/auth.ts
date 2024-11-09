@@ -3,9 +3,10 @@ import { eq } from 'drizzle-orm';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { sessionTable, userTable } from '$server/database/schema';
-import type { SessionValidationResult, Session } from '$server/types.server';
+import type { SessionValidationResult } from '$server/types.server';
 import type { Cookies } from '@sveltejs/kit';
 import { dev } from '$app/environment';
+import type { Session } from '$global/types.global';
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);

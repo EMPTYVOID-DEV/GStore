@@ -12,7 +12,7 @@
 		provides a central management interface and API to handle file storage, with advanced features
 		like file transformations and fine-grained access control.
 	</p>
-	<a href={data.username ? '/stores' : '/auth'}>
+	<a href={data.username ? '/dashboard' : '/auth'}>
 		<SyncButton text="Get Started" icon={RightArrowIcon} />
 	</a>
 </div>

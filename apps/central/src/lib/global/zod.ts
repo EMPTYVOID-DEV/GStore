@@ -22,6 +22,10 @@ export const usernameSchema = z
 	})
 	.max(28, { message: 'Username must be no bigger than 28 characters' });
 
+export const storeNameSchema = z
+	.string()
+	.min(3, { message: 'Store name must have at least three letters.' });
+
 export function getValidator(schema: ZodSchema): (text: string) => ActionStatus {
 	return (text: string) => {
 		const parseResult = schema.safeParse(text);

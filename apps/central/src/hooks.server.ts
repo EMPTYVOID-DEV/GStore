@@ -38,12 +38,12 @@ export const auth: Handle = async ({ event, resolve }) => {
 export const redirects: Handle = async ({ event, resolve }) => {
 	const user = event.locals.user;
 	const pathname = event.url.pathname;
-	if (!user && checkPath(pathname, 'start', ['/stores'])) {
+	if (!user && checkPath(pathname, 'start', ['/dashboard'])) {
 		redirect(302, '/auth');
 	}
 
 	if (user && checkPath(pathname, 'start', ['/auth'])) {
-		redirect(302, '/stores');
+		redirect(302, '/dashboard');
 	}
 
 	return resolve(event);
