@@ -15,6 +15,7 @@
 		"baseUrl": ".",
 		"allowJs": true,
 		"checkJs": false,
+		"strictNullChecks": true,
 		"paths": {
 			"$global": ["./src/lib/global"],
 			"$global/*": ["src/lib/global/*"],

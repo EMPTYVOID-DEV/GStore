@@ -7,3 +7,8 @@ export type Permissions =
 	| 'apply-transformation';
 
 export type Operations = 'create' | 'read' | 'delete' | 'update' | 'apply-transformation';
+
+export type ActionStatus = {
+	state: 'valid' | 'invalid';
+	errorMsg: string;
+};

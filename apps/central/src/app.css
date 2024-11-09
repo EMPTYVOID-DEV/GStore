@@ -1,0 +1,103 @@
+@font-face {
+	font-family: 'Aileron';
+	src: url('./lib/assets/fonts/Aileron-Regular.otf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('./lib/assets/fonts/Aileron-Bold.otf');
+	font-weight: 700;
+}
+
+@font-face {
+	font-family: 'Aileron';
+	src: url('./lib/assets/fonts/Aileron-SemiBold.otf');
+	font-weight: 600;
+}
+
+@font-face {
+	font-family: 'Anek';
+	src: url('./lib/assets/fonts/AnekTamil-Bold.ttf');
+	font-weight: 700;
+}
+
+:not(dialog) {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+a {
+	text-decoration: none;
+}
+
+body {
+	overflow-x: hidden;
+}
+
+:root {
+	--huge: clamp(2.5rem, calc(2.5rem + ((1.2vw - 0.48rem) * 0.9722)), 4rem);
+	--h1: clamp(2rem, calc(2rem + ((1vw - 0.48rem) * 0.9722)), 2.5rem);
+	--h2: clamp(1.725rem, calc(1.725rem + ((1vw - 0.48rem) * 0.9722)), 2rem);
+	--h3: clamp(1.5rem, calc(1.5rem + ((1vw - 0.48rem) * 0.9722)), 1.725rem);
+	--h4: clamp(1.275rem, calc(1.275rem + ((1vw - 0.48rem) * 0.3472)), 1.5rem);
+	--body: clamp(1rem, calc(1rem + ((1vw - 0.48rem) * 0.1736)), 1.275rem);
+	--small: clamp(0.875rem, calc(0.875rem + ((1vw - 0.48rem) * 0.1736)), 1rem);
+	--primaryColor: #10a3b6;
+	--backgroundColor: #121212;
+	--foregroundColor: #ffffff;
+	--dangerColor: #d62e2e;
+	--successColor: #42da34;
+	--mutedColor: #aaaaaa;
+	--lh1: 1.3;
+	--lh2: 1.35;
+	--lh3: 1.4;
+	--lh4: 1.5;
+	--lhbody: 1.6;
+	--border-radius: 0.3rem;
+	--bodyFont: 'Aileron', serif;
+	--headerFont: 'Anek', sans-serif;
+}
+
+:where(h1, h2, h3, h4) {
+	font-family: var(--headerFont);
+	font-weight: bold;
+	font-optical-sizing: auto;
+	font-variation-settings: 'wdth' 112;
+}
+h1 {
+	font-size: var(--h1);
+	line-height: var(--lh1);
+}
+h2 {
+	font-size: var(--h2);
+	line-height: var(--lh2);
+}
+h3 {
+	font-size: var(--h3);
+	line-height: var(--lh3);
+}
+h4 {
+	font-size: var(--h4);
+	line-height: var(--lh4);
+}
+
+:where(label, code, span, li, p, i, a) {
+	font-family: var(--bodyFont);
+	font-size: var(--body);
+	font-weight: 400;
+	line-height: var(--lbody);
+}
+
+*::-webkit-scrollbar {
+	width: 0.7rem;
+}
+*::-webkit-scrollbar-track {
+	border-radius: 0;
+	background: var(--backgroundColor);
+}
+
+*::-webkit-scrollbar-thumb {
+	background: var(--mutedColor);
+}

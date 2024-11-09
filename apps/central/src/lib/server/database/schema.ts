@@ -38,8 +38,8 @@ export const keyTable = pgTable(
 			}),
 		provider_name: text('provider_name').notNull(),
 		provider_id: text('provider_id').notNull(),
-		secret: text('secret'),
-		verified: boolean('verified')
+		secret: text('secret').notNull(),
+		verified: boolean('verified').notNull()
 	},
 	(table) => [primaryKey({ columns: [table.provider_id, table.provider_name] })]
 );
