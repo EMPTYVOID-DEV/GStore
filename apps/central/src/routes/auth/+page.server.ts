@@ -44,7 +44,7 @@ export const actions: Actions = {
 			if (error.code === '23505')
 				return fail(409, { message: 'It seems that this account already exist.' });
 		}
-		redirect(302, `/auth/verify/${email}`);
+		redirect(303, `/auth/verify/${email}`);
 	},
 	'Sign in': async ({ cookies, request }) => {
 		const fd = await request.formData();
@@ -64,8 +64,8 @@ export const actions: Actions = {
 		if (!isValid) return fail(403, { message: 'The password is not correct.' });
 		if (userKey.verified) {
 			await createSessionWrapper(cookies, userKey.userId);
-			redirect(302, '/dashboard');
+			redirect(303, '/dashboard');
 		}
-		redirect(302, `/auth/verify/${email}`);
+		redirect(303, `/auth/verify/${email}`);
 	}
 };

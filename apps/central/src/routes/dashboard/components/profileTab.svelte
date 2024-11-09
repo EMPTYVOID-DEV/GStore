@@ -49,8 +49,7 @@
 		--width: 50%;
 	}
 
-	.input h3,
-	.input span {
+	.input :is(h3, span) {
 		color: var(--foregroundColor);
 	}
 

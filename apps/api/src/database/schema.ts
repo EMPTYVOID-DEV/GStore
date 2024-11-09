@@ -59,6 +59,7 @@ export const apiKeyTable = pgTable(
     storeId: varchar('store_id', { length: 8 })
       .notNull()
       .references(() => storeTable.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
     expiresAt: timestamp('expires_at').notNull(),
     permissions: text('permissions').array().$type<Permissions[]>().notNull(),
   },

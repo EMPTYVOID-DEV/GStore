@@ -1,3 +1,5 @@
+import { db } from '$server/database/db';
+import { storeTable } from '$server/database/schema';
 import {
 	validateSessionToken,
 	setSessionTokenCookie,
@@ -7,6 +9,7 @@ import { checkPath } from '$server/utils/general';
 
 import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
+import { and, eq } from 'drizzle-orm';
 
 export const handleError: HandleServerError = async ({ error }) => {
 	console.log(error);
@@ -39,11 +42,19 @@ export const redirects: Handle = async ({ event, resolve }) => {
 	const user = event.locals.user;
 	const pathname = event.url.pathname;
 	if (!user && checkPath(pathname, 'start', ['/dashboard'])) {
-		redirect(302, '/auth');
+		redirect(303, '/auth');
 	}
 
 	if (user && checkPath(pathname, 'start', ['/auth'])) {
-		redirect(302, '/dashboard');
+		redirect(303, '/dashboard');
+	}
+
+	if (user && event.params.store) {
+		const storeId = event.params.store;
+		const store = await db.query.storeTable.findFirst({
+			where: and(eq(storeTable.userId, user.id), eq(storeTable.id, storeId))
+		});
+		if (!store) redirect(303, '/dashboard');
 	}
 
 	return resolve(event);

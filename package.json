@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "api-dev": "pnpm --filter @g-store/api dev",
-    "api-build": "pnpm --filter @g-store/api build",
-    "web-dev": "pnpm --filter @g-store/central dev",
-    "web-build": "pnpm --filter @g-store/central build"
+    "api-dev": "pnpm --filter @gstore/api dev",
+    "api-build": "pnpm --filter @gstore/api build",
+    "central-dev": "pnpm --filter @gstore/central dev",
+    "central-build": "pnpm --filter @gstore/central build"
   },
   "keywords": [],
   "author": "",

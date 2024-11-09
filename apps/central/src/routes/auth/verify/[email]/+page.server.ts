@@ -35,6 +35,6 @@ export const actions: Actions = {
 				.returning({ userId: keyTable.userId })
 		)[0];
 		await createSessionWrapper(cookies, userKey.userId);
-		redirect(302, '/dashboard');
+		redirect(303, '/dashboard');
 	}
 };

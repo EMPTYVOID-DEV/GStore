@@ -20,11 +20,11 @@
 
 <style>
 	.formWrapper {
-		--mixed-light: color-mix(in srgb, var(--foregroundColor) 8%, transparent 92%);
+		--bg-opacity: 8%;
+		background-color: color-mix(in srgb, var(--primaryColor) var(--bg-opacity), transparent);
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		background-color: var(--mixed-light);
 		border: 1px solid var(--mutedColor);
 		border-radius: var(--border-radius);
 	}
