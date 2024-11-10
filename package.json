@@ -6,7 +6,10 @@
     "api-dev": "pnpm --filter @gstore/api dev",
     "api-build": "pnpm --filter @gstore/api build",
     "central-dev": "pnpm --filter @gstore/central dev",
-    "central-build": "pnpm --filter @gstore/central build"
+    "central-build": "pnpm --filter @gstore/central build",
+    "version": "pnpm changeset version",
+    "tag": "pnpm changeset tag",
+    "change": "pnpm changeset"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +20,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@changesets/cli": "^2.27.9"
+  }
 }

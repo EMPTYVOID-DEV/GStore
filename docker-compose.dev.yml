@@ -36,12 +36,17 @@ services:
       - web
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - API_EMAIL=${API_EMAIL:-dev@localhost}
-      - SMTP_HOST=${SMTP_HOST:-0.0.0.0}
-      - SMTP_PORT=${SMTP_PORT:-1222}
+      # This is important to allow the docker container to access the smtp that is running locally.
+      - SMTP_HOST=172.20.0.1
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_EMAIL=${SMTP_EMAIL:-dev@localhost}
+      - SMTP_REQUIRE_AUTH=${SMTP_REQUIRE_AUTH:-false}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
       - ORIGIN=http://central.localhost
+      - NODE_ENV=dev
     expose:
       - ${CENTRAL_PORT:-3000}
     depends_on:
@@ -64,7 +69,7 @@ services:
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - VER=${VER:-1.0.0}
-      - NODE_ENV=${NODE_ENV:-dev}
+      - NODE_ENV=dev
       - PORT=${API_PORT:-3000}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10}
       - ROOT_DIR=${ROOT_DIR:-/app}

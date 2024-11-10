@@ -1,0 +1,43 @@
+name: CP
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions: {}
+
+jobs:
+  release:
+    if: github.repository == 'EMPTYVOID-DEV/GStore'
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - "18.x"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{matrix.node-version}}
+          cache: "pnpm"
+      - run: pnpm install --no-frozen-lockfile
+      - name: Version
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm run version && pnpm run tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

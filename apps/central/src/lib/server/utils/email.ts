@@ -6,7 +6,7 @@ export async function sendVerificationEmail(email: string, text: string) {
 	let settings: SMTPTransport.Options = {
 		host: env.SMTP_HOST,
 		port: parseInt(env.SMTP_PORT),
-		secure: env.NODE_ENV == 'dev'
+		secure: env.NODE_ENV == 'prod'
 	};
 
 	if (env.SMTP_REQUIRE_AUTH == 'true')

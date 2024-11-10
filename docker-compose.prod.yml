@@ -49,12 +49,16 @@ services:
       - web
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - API_EMAIL=${API_EMAIL:?err}
       - SMTP_HOST=${SMTP_HOST:?err}
       - SMTP_PORT=${SMTP_PORT:?err}
+      - SMTP_EMAIL=${SMTP_EMAIL:?err}
+      - SMTP_REQUIRE_AUTH=${SMTP_REQUIRE_AUTH:-false}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
-      - ORIGIN=http://central.${DOMAIN}
+      - ORIGIN=https://central.${DOMAIN}
+      - NODE_ENV=prod
     expose:
       - ${CENTRAL_PORT:-3000}
     depends_on:
@@ -78,7 +82,7 @@ services:
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - VER=${VER:-1.0.0}
-      - NODE_ENV=${NODE_ENV:-prod}
+      - NODE_ENV=prod
       - PORT=${API_PORT:-3000}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10}
       - ROOT_DIR=${ROOT_DIR:-/app}

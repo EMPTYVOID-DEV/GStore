@@ -1,7 +1,8 @@
 {
 	"name": "@gstore/central",
-	"version": "0.0.1",
+	"version": "0.0.0",
 	"type": "module",
+	"private": true,
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
