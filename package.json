@@ -9,6 +9,7 @@
     "central-build": "pnpm --filter @gstore/central build",
     "version": "pnpm changeset version",
     "tag": "pnpm changeset tag",
+    "release": "pnpm run version && pnpm run tag",
     "change": "pnpm changeset"
   },
   "keywords": [],

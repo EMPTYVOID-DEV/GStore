@@ -38,6 +38,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm run version && pnpm run tag
+          version: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
