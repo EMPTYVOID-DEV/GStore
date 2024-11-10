@@ -5,8 +5,8 @@ import { sha256 } from '@oslojs/crypto/sha2';
 import { sessionTable, userTable } from '$server/database/schema';
 import type { SessionValidationResult } from '$server/types.server';
 import type { Cookies } from '@sveltejs/kit';
-import { dev } from '$app/environment';
 import type { Session } from '$global/types.global';
+import { env } from '$env/dynamic/private';
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
@@ -62,7 +62,7 @@ export function setSessionTokenCookie(cookies: Cookies, token: string, expiresAt
 		httpOnly: true,
 		sameSite: 'lax',
 		expires: expiresAt,
-		secure: !dev,
+		secure: env.NODE_ENV == 'prod',
 		path: '/'
 	});
 }

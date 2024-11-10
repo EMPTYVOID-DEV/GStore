@@ -1,4 +1,5 @@
-import { ZodSchema, z } from 'zod';
+import type { ZodSchema } from 'zod';
+import { z } from 'zod';
 import type { ActionStatus } from './types.global';
 
 export const emailSchema = z.string().email('Invalid email address');

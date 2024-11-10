@@ -17,19 +17,19 @@ The GStore API is built using the following tools:
 ## Folder Structure
 
 ```
-api/
-└── src/
-    ├── database/
-    ├── middlewares/
-    ├── routes/
-    │   ├── files/
-    │   ├── imgTransformations/
-    │   ├── pdfTransformations/
-    │   ├── store/
-    │   └── vidTransformations/
-    ├── shared/
-    ├── utils/
-    └── index.ts
+📂 api
+└── 📂 src
+    ├── 📂 database
+    ├── 📂 middlewares
+    ├── 📂 routes
+    │   ├── 📂 files
+    │   ├── 📂 imgTransformations
+    │   ├── 📂 pdfTransformations
+    │   ├── 📂 store
+    │   └── 📂 vidTransformations
+    ├── 📂 shared
+    ├── 📂 utils
+    └── 📄 index.ts
 ```
 
 1. `index.ts` is the API entry point.
@@ -54,6 +54,10 @@ For more details on the available routes, refer to the API documentation.
 ## Logging
 
 Currently, the API uses a basic logging method that writes server errors and request traces to a `.log` file. Any unexpected errors are caught globally.
+
+## Validation
+
+The environment variables are validated using a zod schema.
 
 ## Standards
 

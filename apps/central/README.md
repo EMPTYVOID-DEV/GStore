@@ -1,38 +1,48 @@
-# sv
+# GStore Central app
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The role of this app to store management: user authentication , creating and deleting stores , creating and deleting api keys.
 
-## Creating a project
+## Tech Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+This is the tech stack of the central app :
 
-```bash
-# create a new project in the current directory
-npx sv create
+1. **Sveltekit**: using adapter node.
+2. **Typescript**
+3. **Zero-ui**: a minimal svelte ui library.
+4. **Drizzle Orm**.
+5. **Lucia**: The auth logic is pulled from lucia.
 
-# create a new project in my-app
-npx sv create my-app
+## Folder structure
+
+```
+📂 src
+├── 📂 lib
+│   ├── 📂 assets
+│   │   ├── 📂 fonts
+│   │   └── 📂 images
+│   ├── 📂 client
+│   │   ├── 📂 components
+│   │   ├── 📂 icons
+│   │   ├── 📄 types.d.ts
+│   │   └── 📄 utils.client.ts
+│   ├── 📂 global
+│   │   ├── 📄 zod.ts
+│   │   └── 📄 types.global.ts
+│   └── 📂 server
+│       ├── 📂 database
+│       ├── 📂 utils
+│       ├── 📄 const.server.ts
+│       └── 📄 types.server.ts
+├── 📂 routes
+├── 📄 app.css
+├── 📄 app.ts
+└── 📄 app.html
 ```
 
-## Developing
+### Notes
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. The smtp auth method is **login** you can change it to oauth2 in lib/server/utils/email.ts.
+2. The app uses global colors and fonts in app.css.
+3. The app will ping the api in order to create or delete a store.
+4. Stores have a unique name per user.
+5. Api keys have a unique name per store.

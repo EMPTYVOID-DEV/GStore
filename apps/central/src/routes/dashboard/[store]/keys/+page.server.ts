@@ -2,8 +2,9 @@ import type { Permissions } from '$global/types.global';
 import { getValidator, keyNameSchema } from '$global/zod';
 import { db } from '$server/database/db';
 import { apiKeyTable } from '$server/database/schema';
-import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
+import { error, fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 export const load: ServerLoad = async ({ params }) => {
 	const storeId = params.store || '';
@@ -27,7 +28,7 @@ export const actions: Actions = {
 		const storeId = params.store ?? '';
 		const formData = await request.formData();
 
-		const name = formData.get('name')?.toString() || '';
+		const name = formData.get('name')?.toString().toLocaleLowerCase() || '';
 		const permissionsJson = formData.get('permissions')?.toString() || '';
 		const expiration = formData.get('expiration')?.toString() || '';
 
@@ -51,17 +52,22 @@ export const actions: Actions = {
 		if (isNaN(expirationDate.getTime()) || expirationDate < new Date()) {
 			return fail(400, { message: 'Invalid expiration date' });
 		}
-
-		const key = await db
-			.insert(apiKeyTable)
-			.values({
-				name,
-				permissions,
-				expiresAt: expirationDate,
-				storeId
-			})
-			.returning();
-
-		return key.at(0)?.key;
+		try {
+			const key = await db
+				.insert(apiKeyTable)
+				.values({
+					name,
+					permissions,
+					expiresAt: expirationDate,
+					storeId
+				})
+				.returning();
+			return key.at(0)?.key;
+		} catch (err) {
+			const parseResult = z.object({ code: z.literal('23505') }).safeParse(err);
+			if (parseResult.success && parseResult.data.code == '23505')
+				return fail(400, { message: 'Another key with same name exists' });
+			error(500);
+		}
 	}
 };

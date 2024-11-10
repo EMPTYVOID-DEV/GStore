@@ -10,6 +10,9 @@ import pdfTransformationRoute from '@routes/pdfTransformations/index';
 import vidTransformations from '@routes/vidTransformations/index';
 import { writeToLog } from '@utils/utils.general';
 import storesRoute from '@routes/store/index';
+import { envSchema } from '@shared/schema.global';
+
+envSchema.parse(process.env);
 
 const port = process.env.PORT;
 
@@ -43,7 +46,7 @@ app.get('/', (c) => {
 
 app.doc('/json-docs', {
   info: {
-    version: process.env.VER,
+    version: process.env.VER || '1.0.0',
     title: 'g-store api',
     description: 'External api to handle store management for g-store',
   },

@@ -1,4 +1,3 @@
-import { dev } from '$app/environment';
 import { sendVerificationEmail } from '$server/utils/email';
 import { db } from '$server/database/db';
 import { keyTable } from '$server/database/schema';
@@ -6,6 +5,7 @@ import { createSessionWrapper } from '$server/utils/auth';
 import { fail, type Actions, redirect } from '@sveltejs/kit';
 import { and, eq } from 'drizzle-orm';
 import { customAlphabet } from 'nanoid';
+import { env } from '$env/dynamic/private';
 
 export const actions: Actions = {
 	send: async ({ params, cookies }) => {
@@ -16,7 +16,7 @@ export const actions: Actions = {
 			path: '/auth/verify',
 			httpOnly: true,
 			maxAge: 60 * 10,
-			secure: !dev
+			secure: env.NODE_ENV == 'prod'
 		});
 	},
 	verify: async ({ cookies, request, params }) => {

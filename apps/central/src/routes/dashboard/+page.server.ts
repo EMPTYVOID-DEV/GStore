@@ -22,7 +22,7 @@ export const actions: Actions = {
 		await invalidateSession(sessionId);
 		redirect(303, '/');
 	},
-	create: async ({ fetch, request, locals }) => {
+	create: async ({ request, locals }) => {
 		const fd = await request.formData();
 		const name = fd.get('name')!.toString();
 		const storeNameValidator = getValidator(storeNameSchema);

@@ -10,8 +10,7 @@ import {
 	date,
 	serial,
 	unique,
-	real,
-	uniqueIndex
+	real
 } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
 
@@ -38,8 +37,8 @@ export const keyTable = pgTable(
 			}),
 		provider_name: text('provider_name').notNull(),
 		provider_id: text('provider_id').notNull(),
-		secret: text('secret').notNull(),
-		verified: boolean('verified').notNull()
+		secret: text('secret'),
+		verified: boolean('verified')
 	},
 	(table) => [primaryKey({ columns: [table.provider_id, table.provider_name] })]
 );
@@ -58,7 +57,7 @@ export const storeTable = pgTable(
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' })
 	},
-	(t) => [unique('unique_name').on(t.name, t.userId), uniqueIndex('name').on(t.name, t.userId)]
+	(t) => [unique('unique_name').on(t.name, t.userId)]
 );
 
 export const apiKeyTable = pgTable(
@@ -75,7 +74,7 @@ export const apiKeyTable = pgTable(
 		expiresAt: timestamp('expires_at').notNull(),
 		permissions: text('permissions').array().$type<Permissions[]>().notNull()
 	},
-	(t) => [uniqueIndex('key_index').on(t.key)]
+	(t) => [unique('key_index').on(t.key), unique('name').on(t.name, t.storeId)]
 );
 
 export const fileTable = pgTable('file', {
