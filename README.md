@@ -93,7 +93,7 @@ gstore/
 └── docker-compose.dev.yml
 ```
 
-Each workspace can be deployed separately using its own Dockerfile or together using the root `docker-compose.yml` file. You'll find `.env.example` files in each workspace, along with a **README** file for more details.
+Each workspace can be deployed separately using its own Dockerfile or together using the root `docker-compose.prod.yml` file. You'll find `.env.example` files in each workspace, along with a **README** file for more details.
 
 ## Usage
 
@@ -101,24 +101,21 @@ The steps to run GStore will vary based on your setup. Below are the general ste
 
 ### Local Setup
 
-1. Clone the repo:  
-   `git clone git@github.com:EMPTYVOID-DEV/g-store.git`
+1. Clone the repo: `git clone git@github.com:EMPTYVOID-DEV/g-store.git`
 2. Create a `.env` file using the `.env.example` template
-3. Run:  
-   `sudo docker-compose -f docker-compose.dev.yml up`
+3. Run: `sudo docker-compose -f docker-compose.dev.yml up`
 
 ### Production Setup
 
 1. Get a public domain name
 2. Configure DNS records for your domain to include `api.domain`, `central.domain`, and `traefik.domain`, pointing them to your server’s IP address
 3. Create a `.env` file using the `.env.example` template
-4. Run:  
-   `sudo docker-compose -f docker-compose.prod.yml up`  
-   Traefik will automatically handle Let's Encrypt SSL certificates for your domains
+4. Run: `sudo docker-compose -f docker-compose.prod.yml up`. Traefik will automatically handle Let's Encrypt SSL certificates for your domains
 
 #### Note
 
-Docker compose will build and run the central app , the api , postgres and traefik. For apps each can be run on it own.
+1. Docker compose will build and run the central app , the api , postgres and traefik. For other apps each can be run on it own.
+2. When running the GStore locally it will use docker container for mailpit you can access with `mail.localhost`.
 
 # V2 Features
 

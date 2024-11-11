@@ -9,7 +9,7 @@
     "central-dev": "pnpm --filter @gstore/central dev",
     "central-build": "pnpm --filter @gstore/central build",
     "version": "changeset version",
-    "create-release": "changeset tag && git push --follow-tags",
+    "publish": "changeset publish",
     "change": "changeset"
   },
   "keywords": [],
