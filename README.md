@@ -20,9 +20,9 @@ GStore is a self-hosted storage solution for institutions, companies, and develo
   - Scaler UI documentation
   - Zod validation for all request parts (parameters, query, body)
   - Rate limiting and file size restrictions
-- **Packages**
-  - GStore is extensible through packages
-  - A package is a wrapper around the API for a specific use case (e.g., backup CLI)
+- **Extendability**
+  - We will have other apps on the future that extend the functionality of the api.
+  - Examples can be a backup cli or desktop app for visual management of the files.
 
 ## Architecture
 
@@ -88,8 +88,9 @@ gstore/
 ├── apps/
 │   ├── api/
 │   └── central/
-├── packages/
-└── compose.yml
+├── .env.example
+├── docker-compose.prod.yml
+└── docker-compose.dev.yml
 ```
 
 Each workspace can be deployed separately using its own Dockerfile or together using the root `docker-compose.yml` file. You'll find `.env.example` files in each workspace, along with a **README** file for more details.
@@ -114,6 +115,10 @@ The steps to run GStore will vary based on your setup. Below are the general ste
 4. Run:  
    `sudo docker-compose -f docker-compose.prod.yml up`  
    Traefik will automatically handle Let's Encrypt SSL certificates for your domains
+
+#### Note
+
+Docker compose will build and run the central app , the api , postgres and traefik. For apps each can be run on it own.
 
 # V2 Features
 

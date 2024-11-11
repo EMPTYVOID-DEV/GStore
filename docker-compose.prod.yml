@@ -81,7 +81,6 @@ services:
       - api_storage:/app/storage
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - VER=${VER:-1.0.0}
       - NODE_ENV=prod
       - PORT=${API_PORT:-3000}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10}

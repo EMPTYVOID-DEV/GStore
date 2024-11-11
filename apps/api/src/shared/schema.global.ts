@@ -14,13 +14,6 @@ export const envSchema = z.object({
 
   PORT: z.coerce.number().int().min(1, 'Port must be greater than 0').max(65535, 'Port must be less than or equal to 65535'),
 
-  VER: z
-    .string()
-    .regex(/^\d+\.\d+\.\d+$/, {
-      message: 'Version must be in semantic versioning format (e.g., 1.0.0)',
-    })
-    .optional(),
-
   MAX_FILE_SIZE: z.coerce
     .number({
       required_error: 'Maximum file size is required',

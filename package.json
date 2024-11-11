@@ -1,16 +1,16 @@
 {
-  "name": "@gstore/main",
+  "name": "gstore",
   "version": "0.0.0",
+  "private": true,
   "description": "",
   "scripts": {
     "api-dev": "pnpm --filter @gstore/api dev",
     "api-build": "pnpm --filter @gstore/api build",
     "central-dev": "pnpm --filter @gstore/central dev",
     "central-build": "pnpm --filter @gstore/central build",
-    "version": "pnpm changeset version",
-    "tag": "pnpm changeset tag",
-    "release": "pnpm run version && pnpm run tag",
-    "change": "pnpm changeset"
+    "version": "changeset version",
+    "create-release": "changeset tag && git push --follow-tags",
+    "change": "changeset"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +19,7 @@
     "pnpm": ">=9"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "dependencies": {
     "@changesets/cli": "^2.27.9"

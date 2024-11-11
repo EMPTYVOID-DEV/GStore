@@ -1,6 +1,6 @@
 {
   "name": "@gstore/api",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
   "scripts": {
