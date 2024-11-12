@@ -13,6 +13,7 @@ import {
 import { transformationResponse } from '@shared/const';
 
 export const conversionRoute = createRoute({
+  tags: ['image transformations'],
   method: 'post',
   path: '/conversion',
   request: {
@@ -31,6 +32,7 @@ export const conversionRoute = createRoute({
 });
 
 export const resizeRoute = createRoute({
+  tags: ['image transformations'],
   method: 'post',
   path: '/resize',
   request: {
@@ -49,6 +51,7 @@ export const resizeRoute = createRoute({
 });
 
 export const compressionRoute = createRoute({
+  tags: ['image transformations'],
   path: '/compression',
   method: 'post',
   request: {
@@ -67,6 +70,7 @@ export const compressionRoute = createRoute({
 });
 
 export const blurRoute = createRoute({
+  tags: ['image transformations'],
   path: '/blur',
   method: 'post',
   request: {
@@ -85,6 +89,7 @@ export const blurRoute = createRoute({
 });
 
 export const sharpenRoute = createRoute({
+  tags: ['image transformations'],
   path: '/sharpen',
   method: 'post',
   request: {
@@ -103,6 +108,7 @@ export const sharpenRoute = createRoute({
 });
 
 export const modulateRoute = createRoute({
+  tags: ['image transformations'],
   path: '/modulate',
   method: 'post',
   request: {
@@ -121,6 +127,7 @@ export const modulateRoute = createRoute({
 });
 
 export const sepiaRoute = createRoute({
+  tags: ['image transformations'],
   path: '/sepia',
   method: 'post',
   request: {
@@ -140,6 +147,7 @@ export const sepiaRoute = createRoute({
 });
 
 export const grayscaleRoute = createRoute({
+  tags: ['image transformations'],
   path: '/grayscale',
   method: 'post',
   request: {
@@ -159,6 +167,7 @@ export const grayscaleRoute = createRoute({
 });
 
 export const invertRoute = createRoute({
+  tags: ['image transformations'],
   path: '/invert',
   method: 'post',
   request: {
@@ -178,6 +187,7 @@ export const invertRoute = createRoute({
 });
 
 export const contrastRoute = createRoute({
+  tags: ['image transformations'],
   path: '/contrast',
   method: 'post',
   request: {

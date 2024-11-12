@@ -5,6 +5,7 @@ import { singleInputSchema } from '@shared/schema.global';
 import { addSubtitleSchema, changeResolutionSchema, convertFormatSchema, trimmingSchema } from './vidTransformations.schema';
 
 export const extractAudioRoute = createRoute({
+  tags: ['video transformations'],
   method: 'post',
   path: '/extract-audio',
   responses: transformationResponse,
@@ -23,6 +24,7 @@ export const extractAudioRoute = createRoute({
 });
 
 export const trimRoute = createRoute({
+  tags: ['video transformations'],
   method: 'post',
   path: '/trim',
   responses: transformationResponse,
@@ -41,6 +43,7 @@ export const trimRoute = createRoute({
 });
 
 export const changeResolutionRoute = createRoute({
+  tags: ['video transformations'],
   method: 'post',
   path: '/change-resolution',
   responses: transformationResponse,
@@ -59,6 +62,7 @@ export const changeResolutionRoute = createRoute({
 });
 
 export const addSubtitleRoute = createRoute({
+  tags: ['video transformations'],
   method: 'post',
   path: '/add-subtitles',
   responses: transformationResponse,
@@ -77,6 +81,7 @@ export const addSubtitleRoute = createRoute({
 });
 
 export const convertFormatRoute = createRoute({
+  tags: ['video transformations'],
   method: 'post',
   path: '/convert-format',
   responses: transformationResponse,

@@ -5,6 +5,7 @@ import { transformationResponse } from '@shared/const';
 import { idParamSchema } from '@shared/schema.global';
 
 export const mergeRoute = createRoute({
+  tags: ['pdf transformations'],
   method: 'post',
   path: '/merge',
   request: {
@@ -23,6 +24,7 @@ export const mergeRoute = createRoute({
 });
 
 export const extractPagesRoute = createRoute({
+  tags: ['pdf transformations'],
   method: 'post',
   path: '/extract-pages',
   request: {
@@ -41,6 +43,7 @@ export const extractPagesRoute = createRoute({
 });
 
 export const readMetaRoute = createRoute({
+  tags: ['pdf transformations'],
   method: 'get',
   path: '/readMeta/{id}',
   request: {
@@ -62,6 +65,7 @@ export const readMetaRoute = createRoute({
 });
 
 export const setMetaRoute = createRoute({
+  tags: ['pdf transformations'],
   method: 'post',
   path: '/setMeta',
   request: {
@@ -80,6 +84,7 @@ export const setMetaRoute = createRoute({
 });
 
 export const addAttachmentRoute = createRoute({
+  tags: ['pdf transformations'],
   method: 'post',
   path: '/attach',
   request: {

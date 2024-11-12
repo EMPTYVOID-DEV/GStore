@@ -8,6 +8,7 @@ import filesRoute from '@routes/files/index';
 import imgTransformationRoute from '@routes/imgTransformations/index';
 import pdfTransformationRoute from '@routes/pdfTransformations/index';
 import vidTransformations from '@routes/vidTransformations/index';
+import infoRoute from '@routes/info/index';
 import { writeToLog } from '@utils/utils.general';
 import storesRoute from '@routes/store/index';
 import { envSchema } from '@shared/schema.global';
@@ -40,13 +41,15 @@ app.route('/transformation/pdf', pdfTransformationRoute);
 
 app.route('/transformation/videos', vidTransformations);
 
+app.route('/info', infoRoute);
+
 app.get('/', (c) => {
   return c.redirect('/ui-docs', 303);
 });
 
 app.doc('/json-docs', {
   info: {
-    version: process.env.VER || '1.0.0',
+    version: '*',
     title: 'g-store api',
     description: 'External api to handle store management for g-store',
   },
@@ -57,7 +60,7 @@ app.get(
   '/ui-docs',
   apiReference({
     theme: 'purple',
-    pageTitle: 'g-store api',
+    pageTitle: '@gstore/api',
     layout: 'modern',
     defaultHttpClient: {
       targetKey: 'node',

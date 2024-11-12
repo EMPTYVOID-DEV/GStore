@@ -1,8 +1,5 @@
 {
-  "name": "gstore",
-  "version": "0.0.0",
-  "private": true,
-  "description": "",
+  "name": "gstore-org",
   "scripts": {
     "api-dev": "pnpm --filter @gstore/api dev",
     "api-build": "pnpm --filter @gstore/api build",
@@ -12,9 +9,7 @@
     "publish": "changeset publish",
     "change": "changeset"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "engines": {
     "pnpm": ">=9"
   },

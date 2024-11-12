@@ -6,6 +6,7 @@ import { fileTable } from '@database/schema';
 import { createInsertSchema } from 'drizzle-zod';
 
 export const readStaticRoute = createRoute({
+  tags: ['public'],
   method: 'get',
   path: '/public/{index}',
   request: {
@@ -31,6 +32,7 @@ export const readStaticRoute = createRoute({
 });
 
 export const readFileRoute = createRoute({
+  tags: ['files'],
   method: 'get',
   path: '/read/{id}',
   request: {
@@ -60,6 +62,7 @@ export const readFileRoute = createRoute({
 });
 
 export const readTagsRoute = createRoute({
+  tags: ['files'],
   method: 'get',
   path: '/readTags',
   request: {
@@ -90,6 +93,7 @@ export const readTagsRoute = createRoute({
 });
 
 export const createFileRoute = createRoute({
+  tags: ['files'],
   method: 'post',
   path: '/create',
   request: {
@@ -128,6 +132,7 @@ export const createFileRoute = createRoute({
 });
 
 export const listStoreFilesRoute = createRoute({
+  tags: ['files'],
   method: 'get',
   path: '/list',
   request: {
@@ -159,6 +164,7 @@ export const listStoreFilesRoute = createRoute({
 });
 
 export const deleteFileRoute = createRoute({
+  tags: ['files'],
   method: 'delete',
   path: '/delete/{id}',
   request: {
@@ -193,6 +199,7 @@ export const deleteFileRoute = createRoute({
 });
 
 export const updateFileRoute = createRoute({
+  tags: ['files'],
   method: 'put',
   path: '/update/{id}',
   request: {

@@ -2,8 +2,11 @@
   "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "access": "restricted",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [],
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  }
 }

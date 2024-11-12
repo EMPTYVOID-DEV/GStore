@@ -41,6 +41,7 @@ export const createStoreRoute = createRoute({
       description: 'Invalid json data',
     },
   },
+  tags: ['stores'],
   description: 'This endpoint is  used by the central app to create a store for an existing user',
 });
 
@@ -71,5 +72,6 @@ export const deleteStoreRoute = createRoute({
       description: 'Invalid search params',
     },
   },
+  tags: ['stores'],
   description: 'This endpoint is used by the central app to delete a store. ',
 });
