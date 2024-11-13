@@ -6,89 +6,135 @@
 	import { emailSchema, getValidator, passwordSchema, usernameSchema } from '$global/zod';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Toaster } from 'svelte-sonner';
-	let emailValidator = getValidator(emailSchema);
-	let usernameValidator = getValidator(usernameSchema);
-	let passwordValidtor = getValidator(passwordSchema);
+	import { quadInOut } from 'svelte/easing';
+	import { fade, fly } from 'svelte/transition';
+
+	const emailValidator = getValidator(emailSchema);
+	const usernameValidator = getValidator(usernameSchema);
+	const passwordValidator = getValidator(passwordSchema);
+
 	const handleAction: SubmitFunction = async () => {
 		return ({ result, update }) => {
-			if (result.type == 'failure' && result.data)
+			if (result.type === 'failure' && result.data) {
 				showToast('Error', result.data.message, 'danger');
+			}
 			update({ reset: false });
 		};
 	};
+
 	let state: 'Sign up' | 'Sign in' = 'Sign up';
 </script>
 
 <div class="auth">
-	<h1>GStore</h1>
-	<form action={`?/${state}`} method="post" use:enhance={handleAction}>
-		{#if state == 'Sign up'}
+	<div class="gradient-overlay" />
+	<a href="/" in:fly={{ y: -20, duration: 700 }}>
+		<h1>GStore</h1>
+	</a>
+
+	{#key state}
+		<form
+			action={`?/${state}`}
+			method="post"
+			use:enhance={handleAction}
+			in:fade={{ duration: 800, easing: quadInOut }}
+		>
+			{#if state === 'Sign up'}
+				<ReactiveInput
+					inputType="text"
+					label="Username"
+					checkFunction={usernameValidator}
+					name="username"
+				/>
+			{/if}
+
+			<ReactiveInput inputType="email" label="Email" checkFunction={emailValidator} name="email" />
+
 			<ReactiveInput
-				inputType="text"
-				label="Username"
-				checkFunction={usernameValidator}
-				name="username"
+				inputType="password"
+				label="Password"
+				checkFunction={passwordValidator}
+				name="password"
 			/>
-		{/if}
-		<ReactiveInput inputType="email" label="Email" checkFunction={emailValidator} name="email" />
-		<ReactiveInput
-			inputType="password"
-			label="Password"
-			checkFunction={passwordValidtor}
-			name="password"
-		/>
-		{#if state == 'Sign up'}
-			<span
-				>You already have an account ? <span class="control" on:click={() => (state = 'Sign in')}
-					>Login.</span
-				></span
-			>
-		{:else}
-			<span
-				>Don't have an account ? <span class="control" on:click={() => (state = 'Sign up')}
-					>Sign up.</span
-				></span
-			>
-		{/if}
-		<SyncButton text={state} />
-	</form>
+
+			<span class="toggle-text">
+				{#if state === 'Sign up'}
+					You already have an account?
+					<span class="control" on:click={() => (state = 'Sign in')}>Login</span>
+				{:else}
+					Don't have an account?
+					<span class="control" on:click={() => (state = 'Sign up')}>Sign up</span>
+				{/if}
+			</span>
+
+			<SyncButton text={state} --padding-block="0.8rem" --padding-inline="2rem" />
+		</form>
+	{/key}
 </div>
 
 <Toaster duration={3500} expand />
 
 <style>
 	.auth {
-		width: 100svw;
-		height: 100svh;
+		width: 100vw;
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		background: var(--backgroundColor);
-		gap: 1rem;
+		gap: 2rem;
+		position: relative;
+		overflow: hidden;
 	}
+
+	.gradient-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: radial-gradient(circle at 50% 10%, var(--primaryColor) 30%, transparent 70%);
+		opacity: 0.1;
+		pointer-events: none;
+	}
+
 	.auth h1 {
 		color: var(--foregroundColor);
+		text-shadow: 0 2px 4px var(--backgroundColor);
+		transition: transform 0.3s ease;
 	}
+
+	.auth h1:hover {
+		transform: scale(1.05);
+	}
+
 	.auth form {
+		width: 40%;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		width: 40%;
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 
-	.auth span {
+	.toggle-text {
 		color: var(--foregroundColor);
+		text-align: center;
+		margin-top: 0.5rem;
 	}
 
-	.auth .control {
+	.control {
 		color: var(--primaryColor);
 		cursor: pointer;
+		margin-left: 0.5rem;
+		font-weight: 500;
+		transition: opacity 0.2s ease;
 	}
 
-	@media (width<768px) {
+	.control:hover {
+		opacity: 0.8;
+	}
+
+	@media screen and (max-width: 768px) {
 		.auth form {
 			width: 90%;
 		}

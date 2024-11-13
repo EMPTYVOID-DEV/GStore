@@ -60,7 +60,7 @@ export const actions: Actions = {
 			where: and(eq(keyTable.provider_name, 'email'), eq(keyTable.provider_id, email))
 		});
 		if (!userKey) return fail(404, { message: 'It seems the user does not exist.' });
-		const isValid = await verify(userKey.secret, password);
+		const isValid = await verify(userKey.secret!, password);
 		if (!isValid) return fail(403, { message: 'The password is not correct.' });
 		if (userKey.verified) {
 			await createSessionWrapper(cookies, userKey.userId);

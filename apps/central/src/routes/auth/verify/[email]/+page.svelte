@@ -91,7 +91,8 @@
 	}
 	.wrapper .message {
 		color: var(--foregroundColor);
-		word-break: break-all;
+		hyphens: auto;
+		text-align: center;
 	}
 
 	.wrapper .message .email {
