@@ -71,7 +71,7 @@ export const createFileHandler: RouteHandler<typeof createFileRoute, Authorizati
 
 export const listStoreFilesHandler: RouteHandler<typeof listStoreFilesRoute, AuthorizationBinding> = async (c) => {
   const storeId = c.get('storeId');
-  const { page, size, orderBy, tags } = c.req.valid('query');
+  const { page, size, orderBy, tags, extension, name } = c.req.valid('query');
   const orderMap = new Map<typeof orderBy, SQL>([
     ['name-asc', asc(fileTable.name)],
     ['name-desc', desc(fileTable.name)],
@@ -81,10 +81,14 @@ export const listStoreFilesHandler: RouteHandler<typeof listStoreFilesRoute, Aut
     ['date-desc', desc(fileTable.creationDate)],
   ]);
 
-  const whereQuery = tags ? and(eq(fileTable.storeId, storeId), arrayContains(fileTable.tags, tags)) : eq(fileTable.storeId, storeId);
+  const filters: SQL[] = [];
+  if (name) filters.push(eq(fileTable.name, name));
+  if (extension) filters.push(eq(fileTable.extension, extension));
+  if (tags) filters.push(arrayContains(fileTable.tags, tags));
+  const query = and(eq(fileTable.storeId, storeId), ...filters);
 
   const files = await db.query.fileTable.findMany({
-    where: whereQuery,
+    where: query,
     limit: size,
     offset: page * size,
     orderBy: [orderMap.get(orderBy)!],

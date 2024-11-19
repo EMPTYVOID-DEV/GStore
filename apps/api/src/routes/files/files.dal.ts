@@ -46,7 +46,10 @@ export const readFileRoute = createRoute({
       description: 'File not found',
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     400: {
       content: {
@@ -76,7 +79,10 @@ export const readTagsRoute = createRoute({
       description: 'No files found with all requested tags',
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     400: {
       content: {
@@ -116,7 +122,10 @@ export const createFileRoute = createRoute({
       },
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     400: {
       content: {
@@ -148,7 +157,10 @@ export const listStoreFilesRoute = createRoute({
       },
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     400: {
       content: {
@@ -180,7 +192,10 @@ export const deleteFileRoute = createRoute({
       },
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     404: {
       description: 'File not found',
@@ -223,7 +238,10 @@ export const updateFileRoute = createRoute({
       },
     },
     403: {
-      description: 'Authorization failed',
+      description: 'Insufficient permissions',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
     },
     404: {
       description: 'File not found',
