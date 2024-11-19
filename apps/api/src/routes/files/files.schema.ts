@@ -9,8 +9,7 @@ export const indexParamSchema = z.object({
     .openapi({
       param: {
         in: 'path',
-        description: 'The index is the random name of the public file including its extension.',
-        example: `/public/KPrWbgY4ULwpoQMUOCP5rCk55qeaXPA_.jpg`,
+        description: 'The index is the random name of the public file.',
       },
     }),
 });
@@ -64,7 +63,6 @@ export const listSchema = z.object({
       type: 'integer',
       param: {
         in: 'query',
-        example: '/files/list?size=10',
         description: 'This param specifies the page size.',
       },
       minimum: 1,
@@ -87,7 +85,6 @@ export const listSchema = z.object({
       type: 'integer',
       param: {
         in: 'query',
-        example: '/files/list?page=1',
         description: 'This param specifies the page number.',
       },
       minimum: 0,
@@ -101,8 +98,27 @@ export const listSchema = z.object({
       enum: ['size-asc', 'name-asc', 'date-asc', 'size-desc', 'name-desc', 'date-desc'],
       param: {
         in: 'query',
-        example: '/files/list?orderBy=size-asc',
         description: 'This param specifies the order criteria.',
+      },
+    }),
+  name: z
+    .string()
+    .optional()
+    .openapi({
+      type: 'string',
+      param: {
+        description: 'File name without extension',
+        in: 'query',
+      },
+    }),
+  extension: z
+    .string()
+    .optional()
+    .openapi({
+      type: 'string',
+      param: {
+        description: 'File extension, must start with "."',
+        in: 'query',
       },
     }),
   tags: z

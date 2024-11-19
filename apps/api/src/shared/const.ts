@@ -15,7 +15,10 @@ export const transformationResponse = {
     description: 'Operated file(s) not found',
   },
   403: {
-    description: 'Authorization failed',
+    description: 'Insufficient permissions',
+  },
+  401: {
+    description: 'Missing valid authorization credentials',
   },
   400: {
     content: {
