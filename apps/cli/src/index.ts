@@ -1,9 +1,11 @@
 #! /usr/bin/env bun
-import { logger, validateSchema } from '@utils/general.js';
+import { errorExit, validateSchema } from '@utils/general.js';
 import { cli } from '@helpers/cli.js';
 import { loadConfig } from '@helpers/loadConfig';
 import { configSchema } from '@shared/zodSchemas';
 import type { Config } from '@shared/types';
+import { ActionsExecuter } from '@helpers/actionsExecuter';
+import { getApiInfo } from '@helpers/getApiInfo';
 
 /**
  * cli
@@ -18,9 +20,9 @@ async function main() {
   const options = await cli();
   const config = await loadConfig(options.config);
   const parsedConfig = validateSchema<Config>(config, configSchema);
-  console.log(parsedConfig);
+  const actionsExecuter = new ActionsExecuter(parsedConfig);
+  await actionsExecuter.verifyKey();
+  await getApiInfo(parsedConfig.host);
 }
 
-main().catch((err: Error) => {
-  logger().error(err.message);
-});
+main().catch(() => errorExit('Something went wrong'));

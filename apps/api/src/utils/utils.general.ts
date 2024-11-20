@@ -14,6 +14,7 @@ import Ffmpeg from 'fluent-ffmpeg';
 import tmp from 'tmp';
 import { promisify } from 'util';
 import { inArray } from 'drizzle-orm';
+import { env } from '@shared/env';
 
 export function createTmpFile(options: tmp.FileOptions = {}) {
   return new Promise<{ name: string; cleanup: () => void }>((res) => {
@@ -27,7 +28,7 @@ export function getFullName(name: string, extension: string) {
 
 export function getFilePath(isPublic: boolean, index: string, extension: string, storeId: string) {
   const storageType = isPublic ? 'public' : 'private';
-  return path.join(process.env.ROOT_DIR, 'storage', storeId, storageType, getFullName(index, extension));
+  return path.join(env.ROOT_DIR, 'storage', storeId, storageType, getFullName(index, extension));
 }
 
 export function Uint8ArrayToBuffer(data: Uint8Array) {
@@ -126,7 +127,7 @@ export async function createFfmpegInstance(
 
 export function writeToLog(message: string, type: 'ERROR' | 'REQUEST') {
   const logMsg = `Date: ${new Date().toISOString()} , Type: ${type} , Message: ${message} \n\n`;
-  const logFilePath = path.join(process.env.ROOT_DIR, '.log');
+  const logFilePath = path.join(env.ROOT_DIR, '.log');
   return appendFile(logFilePath, logMsg);
 }
 
