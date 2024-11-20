@@ -4,15 +4,20 @@ import type { ZodError, ZodSchema } from 'zod';
 export function logger() {
   return {
     info: (message: string) => {
-      console.log(chalk.blueBright(message));
+      console.log(chalk.blueBright(message), '\n');
     },
     success: (message: string) => {
-      console.log(chalk.greenBright(message));
+      console.log(chalk.greenBright(message), '\n');
     },
     error: (message: string) => {
-      console.log(chalk.redBright(message));
+      console.log(chalk.redBright(message), '\n');
     },
   };
+}
+
+export function errorExit(message: string) {
+  logger().error(message);
+  process.exit(1);
 }
 
 export function validateSchema<A extends Record<string, unknown>>(record: Record<string, unknown>, schema: ZodSchema): A {

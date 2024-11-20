@@ -60,7 +60,8 @@ export const actionsSchema = z.discriminatedUnion('name', [
 
 export const configSchema = z.object({
   tracking: z.boolean({ message: 'Tracking must be a boolean' }),
-  key: z.string({ message: 'Key must be a string' }),
+  key: z.string({ message: 'Key must be a string' }).min(32, { message: 'Key size is 32' }).max(32, { message: 'Key size is 32' }),
+  host: z.string({ message: 'Host must be a string' }),
   actions: z.record(z.string({ message: 'Action key must be a string' }), actionsSchema, {
     message: 'Actions must be a record of valid actions',
   }),

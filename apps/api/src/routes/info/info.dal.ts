@@ -1,6 +1,6 @@
 import { apiKeyTable } from '@database/schema';
 import { createRoute } from '@hono/zod-openapi';
-import { envSchema } from '@shared/schema.global';
+import { envSchema } from '@shared/env';
 import { createSelectSchema } from 'drizzle-zod';
 import { keyInfoSchema } from './info.schema';
 

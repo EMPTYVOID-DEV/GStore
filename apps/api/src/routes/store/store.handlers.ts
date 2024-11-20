@@ -7,12 +7,13 @@ import { mkdir, rm } from 'fs/promises';
 import path from 'path';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import { env } from '@shared/env';
 
 export const createStoreHandler: RouteHandler<typeof createStoreRoute> = async (c) => {
   const { name, userId } = c.req.valid('json');
   try {
     const id = nanoid(8);
-    const storePath = path.join(process.env.ROOT_DIR, 'storage', id);
+    const storePath = path.join(env.ROOT_DIR, 'storage', id);
     await db.insert(storeTable).values({ name, userId, id }).returning();
     await Promise.all([
       mkdir(path.join(storePath, 'public'), { recursive: true }),
@@ -32,7 +33,7 @@ export const deleteStoreHandler: RouteHandler<typeof deleteStoreRoute> = async (
   const { id } = c.req.valid('param');
   const store = await db.delete(storeTable).where(eq(storeTable.id, id)).returning();
   if (store.length == 0) return c.notFound();
-  const storePath = path.join(process.env.ROOT_DIR, 'storage', id);
+  const storePath = path.join(env.ROOT_DIR, 'storage', id);
   await rm(storePath, { recursive: true });
   return c.json(store.at(0));
 };

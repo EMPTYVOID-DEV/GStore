@@ -1,6 +1,7 @@
 {
   "tracking": true,
-  "key": "28kskdmsk39933394kskksk",
+  "key": "N654k9jCSH6d01apaSAyMZgcRkiSXI32",
+  "host": "http://localhost:3001",
   "actions": {
     "backup pictures folder": {
       "name": "create",
