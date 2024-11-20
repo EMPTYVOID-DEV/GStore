@@ -1,4 +1,4 @@
-import { logger } from '@utils/general';
+import { logger } from '@shared/utils';
 
 export async function loadConfig(configPath: string): Promise<Record<string, unknown>> {
   const configFile = Bun.file(configPath);

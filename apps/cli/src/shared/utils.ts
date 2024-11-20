@@ -30,3 +30,7 @@ export function validateSchema<A extends Record<string, unknown>>(record: Record
     process.exit(1);
   }
 }
+
+export function byteToMega(bytes: number) {
+  return bytes / 1000000;
+}

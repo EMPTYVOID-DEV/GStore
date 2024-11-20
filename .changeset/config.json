@@ -4,7 +4,7 @@
   "commit": false,
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": [],
+  "ignore": ["@gstore-org/desktop", "@gstore-org/cli"],
   "privatePackages": {
     "version": true,
     "tag": true

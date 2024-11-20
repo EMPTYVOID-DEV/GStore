@@ -5,7 +5,7 @@ export async function cli() {
   const cmd = new Command()
     .name('GStore CLI')
     .description('GStore CLI let you interact with GStore api from the terminal either for backups with cron jobs or devops workflows')
-    .requiredOption('-c, --config <path>', 'CLI Configuration file path');
+    .requiredOption('-c, --configPath <path>', 'CLI Configuration file path');
   cmd.parse();
   return cmd.opts<CliOptions>();
 }

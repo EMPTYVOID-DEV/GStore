@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { actionsSchema, configSchema } from './zodSchemas';
 
-export type CliOptions = { config: string };
+export type CliOptions = { configPath: string };
 
 export type Actions = z.infer<typeof actionsSchema>;
 
@@ -16,6 +16,18 @@ export type ApiKey = {
   permissions: Permissions[];
   id: number;
   key: string;
+};
+
+export type FileEntry = {
+  name: string;
+  id: string;
+  creationDate: string;
+  storeId: string;
+  extension: string;
+  size: number;
+  index: string;
+  isPublic: boolean;
+  tags: string[];
 };
 
 export type ApiInfo = {
