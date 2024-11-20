@@ -1,0 +1,36 @@
+{
+  "tracking": true,
+  "key": "28kskdmsk39933394kskksk",
+  "actions": {
+    "backup pictures folder": {
+      "name": "create",
+      "data": {
+        "isPublic": false,
+        "tags": ["images"],
+        "path": "/pictures/rin.png"
+      }
+    },
+    "update pictures folder": {
+      "name": "update",
+      "data": {
+        "isPublic": false,
+        "tags": ["images"],
+        "path": "/pictures/rin.png"
+      }
+    }
+  },
+  "tracks": [
+    {
+      "id": "5Ngfieuv",
+      "name": "1",
+      "extension": ".jpg",
+      "size": 5484447,
+      "creationDate": "2024-11-19",
+      "storeId": "GuTU2akz",
+      "index": "G1UCjO6mTxq-hIvafWTOebRMgZcgldHc",
+      "isPublic": true,
+      "tags": ["image"],
+      "path": "~/pictures/rin.png"
+    }
+  ]
+}
