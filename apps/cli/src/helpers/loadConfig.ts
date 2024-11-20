@@ -7,7 +7,7 @@ export async function loadConfig(configPath: string): Promise<Record<string, unk
     return JSON.parse(configContent);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    logger().error('Error occured while parsing the config, aborting...');
-    process.abort();
+    logger().error('Error occured while parsing the config');
+    process.exit(1);
   }
 }
