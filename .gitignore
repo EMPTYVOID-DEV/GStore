@@ -27,3 +27,6 @@ Thumbs.db
 # Editor files
 .vscode/
 
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
