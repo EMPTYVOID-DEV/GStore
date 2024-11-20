@@ -1,5 +1,11 @@
 # @gstore/api
 
+## 1.2.1
+
+### Patch Changes
+
+- 8e098a7: Replacing process.env with zod parsed env
+
 ## 1.2.0
 
 ### Minor Changes
