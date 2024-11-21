@@ -18,7 +18,8 @@
     "rootDir": ".",
     "paths": {
       "@shared/*": ["./src/shared/*"],
-      "@helpers/*": ["./src/helpers/*"]
+      "@helpers/*": ["./src/helpers/*"],
+      "@commands/*": ["./src/commands/*"]
     }
   },
   "include": ["src/**/*", "eslint.config.js"],

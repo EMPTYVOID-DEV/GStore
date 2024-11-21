@@ -1,15 +1,34 @@
-import type { ApiInfo, ApiKey, Config, FileEntry } from '@shared/types';
-import { byteToMega, errorExit, logger } from '@shared/utils';
+import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '@shared/types';
+import { byteToMega, errorExit, loadJson, logger, validateSchema } from '@shared/utils';
 import axios from 'axios';
 import ora from 'ora';
+import { readdir, exists } from 'fs/promises';
+import Path from 'path';
+import { tracksSchema } from '@shared/zodSchemas';
 
 export class ActionsExecuter {
-  private config: Config;
-  private tracks: { id: string; path: string }[] = [];
+  private config: ConfigJson;
+  private tracks: TracksJson['tracks'] = [];
   private apiInfo: ApiInfo = { MAX_FILE_SIZE: -1, RATE_LIMITS: -1, RATE_WINDOW: -1 };
+  private tracking: boolean = false;
 
-  constructor(config: Config) {
+  constructor(config: ConfigJson) {
     this.config = config;
+  }
+
+  async loadTrackingFile() {
+    const trackingFile = this.config.trackingFile;
+    if (!trackingFile) return;
+    const tracks = await loadJson(trackingFile, 'Tracking');
+    const parsedTracks = validateSchema<TracksJson>(tracks, tracksSchema);
+    this.tracking = true;
+    this.tracks = parsedTracks.tracks;
+  }
+
+  async flashTracks() {
+    if (!this.tracking) return;
+    const content = JSON.stringify({ tracks: this.tracks });
+    await Bun.write(this.config.trackingFile!, content);
   }
 
   async verifyKey(): Promise<void> {
@@ -45,6 +64,9 @@ export class ActionsExecuter {
           case 'create':
             await this.createFile(actionContext.data);
             break;
+          case 'createDir':
+            await this.createDir(actionContext.data);
+            break;
           case 'delete':
             await this.deleteFile(actionContext.data);
             break;
@@ -60,9 +82,36 @@ export class ActionsExecuter {
       }
     }
   }
+  private existsInTracks(path: string): boolean {
+    return this.tracking && this.tracks.some((track) => track.path === path);
+  }
+
+  private async createDir(data: { path: string; isPublic: boolean; tags: string[]; ignore: string[] }) {
+    const { path, isPublic, tags, ignore } = data;
+
+    const isDirExists = await exists(path);
+    if (!isDirExists) throw new Error(`This directory does not exists ${path}`);
+
+    const entries = await readdir(path, { withFileTypes: true });
+
+    for (const entry of entries) {
+      if (ignore.includes(entry.name)) continue;
+
+      if (entry.isFile()) {
+        const fullPath = Path.join(path, entry.name);
+        await this.createFile({
+          path: fullPath,
+          isPublic,
+          tags,
+        });
+      }
+    }
+  }
 
   private async createFile(data: { path: string; isPublic: boolean; tags: string[] }): Promise<void> {
     const { path, isPublic, tags } = data;
+
+    if (this.existsInTracks(path)) throw new Error(`This file ${path} is tracked`);
 
     const file = Bun.file(path);
     const exists = await file.exists();
@@ -74,11 +123,12 @@ export class ActionsExecuter {
     formData.append('isPublic', String(isPublic));
     tags.forEach((tag) => formData.append('tags', tag));
 
-    const { data: fileEntry } = await axios.post<FileEntry>(`${this.config.host}/files/create`, formData, {
+    const response = await axios.post<FileEntry>(`${this.config.host}/files/create`, formData, {
       headers: { Authorization: `Bearer ${this.config.key}` },
+      responseType: 'json',
     });
 
-    this.tracks.push({ path, id: fileEntry.id });
+    this.tracks.push({ path, id: response.data.id });
   }
 
   private async updateFile(data: { id: string; path?: string; name?: string; tags?: string[] }) {

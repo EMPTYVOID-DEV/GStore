@@ -58,7 +58,7 @@ export async function createFile(c: Context, storeId: string, file: File, isPubl
 
   if (res[0].status == 'rejected' || res[1].status == 'rejected') return c.text('Service Unavailable', 500);
 
-  return c.json(res[1].value);
+  return c.json(res[1].value[0]);
 }
 
 async function handleTransformationUpdate(c: Context, storeId: string, id: string, file: File, ext: string) {

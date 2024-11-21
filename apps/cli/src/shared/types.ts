@@ -1,11 +1,15 @@
 import type { z } from 'zod';
-import type { actionsSchema, configSchema } from './zodSchemas';
+import type { actionsSchema, configSchema, tracksSchema } from './zodSchemas';
 
-export type CliOptions = { configPath: string };
+export type SyncOptions = { configPath: string };
+
+export type CommandName = 'sync' | 'generate-schema';
 
 export type Actions = z.infer<typeof actionsSchema>;
 
-export type Config = z.infer<typeof configSchema>;
+export type ConfigJson = z.infer<typeof configSchema>;
+
+export type TracksJson = z.infer<typeof tracksSchema>;
 
 export type Permissions = 'create' | 'read' | 'delete' | 'update' | 'list-files' | 'apply-transformation';
 

@@ -9,16 +9,34 @@ export const actionsSchema = z.discriminatedUnion('name', [
   z.object({
     name: z.literal('create'),
     data: z.object({
-      path: z.string({ message: 'Path is required and must be a string' }),
+      path: z.string({ message: 'File path is required and must be a string' }).refine((path) => !path.endsWith('/'), {
+        message: 'File path must not end with a "/"',
+      }),
       isPublic: z.boolean({ message: 'isPublic must be a boolean' }),
       tags: z.string({ message: 'Tags must be strings' }).array().default([]),
+    }),
+  }),
+  z.object({
+    name: z.literal('createDir'),
+    data: z.object({
+      path: z.string({ message: 'Directory path is required and must be a string' }).refine((path) => path.endsWith('/'), {
+        message: 'Directory path must end with a "/"',
+      }),
+      isPublic: z.boolean({ message: 'isPublic must be a boolean' }),
+      tags: z.string({ message: 'Tags must be strings' }).array().default([]),
+      ignore: z.string().array().describe('This specifies the ignored sub directories').default([]),
     }),
   }),
   z.object({
     name: z.literal('update'),
     data: z.object({
       id: idSchema,
-      path: z.string({ message: 'Path must be a string' }).optional(),
+      path: z
+        .string({ message: 'File Path must be a string' })
+        .refine((path) => !path.endsWith('/'), {
+          message: 'File path must not end with a "/"',
+        })
+        .optional(),
       name: z.string({ message: 'Name must be a string' }).optional(),
       tags: z.string({ message: 'Tags must be strings' }).array().optional(),
     }),
@@ -40,4 +58,8 @@ export const configSchema = z.object({
   actions: z.record(z.string({ message: 'Action key must be a string' }), actionsSchema, {
     message: 'Actions must be a record of valid actions',
   }),
+});
+
+export const tracksSchema = z.object({
+  tracks: z.object({ id: idSchema, path: z.string() }).array(),
 });

@@ -34,3 +34,17 @@ export function validateSchema<A extends Record<string, unknown>>(record: Record
 export function byteToMega(bytes: number) {
   return bytes / 1000000;
 }
+
+export async function loadJson(path: string, name: string): Promise<Record<string, unknown>> {
+  const file = Bun.file(path);
+  const exists = await file.exists();
+  if (!exists) errorExit(`${name} file does not exit`);
+  const content = await file.text();
+  try {
+    return JSON.parse(content);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    logger().error(`Error occured while parsing the ${name} file`);
+    process.exit(1);
+  }
+}

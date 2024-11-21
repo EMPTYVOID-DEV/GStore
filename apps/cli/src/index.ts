@@ -1,19 +1,33 @@
-#! /usr/bin/env bun
-import { errorExit, validateSchema } from '@shared/utils.js';
-import { cli } from '@helpers/cli.js';
-import { loadConfig } from '@helpers/loadConfig';
-import { configSchema } from '@shared/zodSchemas';
-import type { Config } from '@shared/types';
-import { ActionsExecuter } from '@helpers/actionsExecuter';
+import { generateSchemaCommand } from '@commands/generateSchema';
+import { syncCommand } from '@commands/sync';
+import type { CommandName, SyncOptions } from '@shared/types';
+import { errorExit } from '@shared/utils';
+import { Command } from 'commander';
 
-async function main() {
-  const options = await cli();
-  const config = await loadConfig(options.configPath);
-  const parsedConfig = validateSchema<Config>(config, configSchema);
-  const actionsExecuter = new ActionsExecuter(parsedConfig);
-  await actionsExecuter.verifyKey();
-  await actionsExecuter.fetchApiInfo();
-  await actionsExecuter.execute();
+export async function main() {
+  const program = new Command();
+
+  const generateSchema = new Command('generate-schema').description(
+    'Generate schema command is used to generate json schema for both config and tracking files',
+  );
+
+  const sync = new Command('sync')
+    .description('Sync command will execute the actions in the config file.')
+    .requiredOption('-c, --configPath <path>', 'CLI Configuration file path');
+
+  program.addCommand(generateSchema);
+
+  program.addCommand(sync);
+
+  const parsed = program.parse();
+
+  const commandName = parsed.args[0] as CommandName;
+
+  if (commandName == 'generate-schema') await generateSchemaCommand();
+  else if (commandName == 'sync') {
+    const syncOptions = sync.opts<SyncOptions>();
+    await syncCommand(syncOptions);
+  }
 }
 
 main()
