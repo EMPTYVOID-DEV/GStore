@@ -61,5 +61,5 @@ export const configSchema = z.object({
 });
 
 export const tracksSchema = z.object({
-  tracks: z.object({ id: idSchema, path: z.string() }).array(),
+  tracks: z.object({ id: idSchema, path: z.string() }, { message: 'Track contain file id and path to it locally' }).array(),
 });

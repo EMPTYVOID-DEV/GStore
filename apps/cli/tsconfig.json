@@ -15,12 +15,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noEmit": true,
     "outDir": "./dist",
-    "rootDir": ".",
-    "paths": {
-      "@shared/*": ["./src/shared/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@commands/*": ["./src/commands/*"]
-    }
+    "rootDir": "."
   },
   "include": ["src/**/*", "eslint.config.js"],
   "exclude": ["node_modules", "dist"]

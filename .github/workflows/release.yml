@@ -29,6 +29,9 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build Public Packages
+        run: pnpm run build-public
+
       - name: Create a Release
         id: changesets
         uses: changesets/action@v1

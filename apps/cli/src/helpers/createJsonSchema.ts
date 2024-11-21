@@ -1,4 +1,4 @@
-import { configSchema, tracksSchema } from '@shared/zodSchemas';
+import { configSchema, tracksSchema } from '../shared/zodSchemas';
 import path from 'path';
 import zodToJson from 'zod-to-json-schema';
 

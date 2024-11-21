@@ -1,25 +1,24 @@
-import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '@shared/types';
-import { byteToMega, errorExit, loadJson, logger, validateSchema } from '@shared/utils';
 import axios from 'axios';
 import ora from 'ora';
-import { readdir, exists } from 'fs/promises';
+import { access, readdir } from 'fs/promises';
 import Path from 'path';
-import { tracksSchema } from '@shared/zodSchemas';
+import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '../shared/types';
+import { byteToMega, errorExit, loadJson, logger, validateSchema } from '../shared/utils';
+import { tracksSchema } from '../shared/zodSchemas';
 
 export class ActionsExecuter {
   private config: ConfigJson;
   private tracks: TracksJson['tracks'] = [];
   private apiInfo: ApiInfo = { MAX_FILE_SIZE: -1, RATE_LIMITS: -1, RATE_WINDOW: -1 };
-  private tracking: boolean = false;
+  private tracking = false;
 
   constructor(config: ConfigJson) {
     this.config = config;
   }
 
   async loadTrackingFile() {
-    const trackingFile = this.config.trackingFile;
-    if (!trackingFile) return;
-    const tracks = await loadJson(trackingFile, 'Tracking');
+    if (!this.config.trackingFile) return;
+    const tracks = await loadJson(this.config.trackingFile, 'Tracking');
     const parsedTracks = validateSchema<TracksJson>(tracks, tracksSchema);
     this.tracking = true;
     this.tracks = parsedTracks.tracks;
@@ -35,7 +34,7 @@ export class ActionsExecuter {
     try {
       const { data } = await axios.get<ApiKey>(`${this.config.host}/info/key-info/${this.config.key}`);
       if (new Date() >= new Date(data.expiresAt)) errorExit('Key expired');
-      logger().info(`Key name: ${data.name}, Store: ${data.storeId}, Permissions: ${data.permissions.join(',')}`);
+      logger().info(`Key name: ${data.name}, Store: ${data.storeId}, Permissions: ${data.permissions.join(', ')}`);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) errorExit('Key not found');
       errorExit('Failed to verify the key');
@@ -57,9 +56,8 @@ export class ActionsExecuter {
 
     for (const actionName in actions) {
       const spinner = ora(`Executing ${actionName}`).start();
-      const actionContext = actions[actionName];
-
       try {
+        const actionContext = actions[actionName];
         switch (actionContext.name) {
           case 'create':
             await this.createFile(actionContext.data);
@@ -74,7 +72,6 @@ export class ActionsExecuter {
             await this.updateFile(actionContext.data);
             break;
         }
-
         spinner.succeed(`${actionName} executed successfully`);
       } catch (error) {
         spinner.fail(`${actionName} failed`);
@@ -82,6 +79,7 @@ export class ActionsExecuter {
       }
     }
   }
+
   private existsInTracks(path: string): boolean {
     return this.tracking && this.tracks.some((track) => track.path === path);
   }
@@ -89,21 +87,20 @@ export class ActionsExecuter {
   private async createDir(data: { path: string; isPublic: boolean; tags: string[]; ignore: string[] }) {
     const { path, isPublic, tags, ignore } = data;
 
-    const isDirExists = await exists(path);
-    if (!isDirExists) throw new Error(`This directory does not exists ${path}`);
+    try {
+      await access(path);
+    } catch {
+      throw new Error(`Directory does not exist: ${path}`);
+    }
 
     const entries = await readdir(path, { withFileTypes: true });
-
     for (const entry of entries) {
       if (ignore.includes(entry.name)) continue;
 
       if (entry.isFile()) {
         const fullPath = Path.join(path, entry.name);
-        await this.createFile({
-          path: fullPath,
-          isPublic,
-          tags,
-        });
+        await this.createFile({ path: fullPath, isPublic, tags });
+        logger().success(`${entry.name} created successfully`);
       }
     }
   }
@@ -111,37 +108,34 @@ export class ActionsExecuter {
   private async createFile(data: { path: string; isPublic: boolean; tags: string[] }): Promise<void> {
     const { path, isPublic, tags } = data;
 
-    if (this.existsInTracks(path)) throw new Error(`This file ${path} is tracked`);
+    if (this.existsInTracks(path)) throw new Error(`File is already tracked: ${path}`);
 
     const file = Bun.file(path);
-    const exists = await file.exists();
-    if (!exists) throw new Error(`File not found: ${path}`);
-    if (byteToMega(file.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error('File exceeds maximum allowed size');
+    if (!(await file.exists())) throw new Error(`File not found: ${path}`);
+    if (byteToMega(file.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error(`File exceeds maximum size: ${path}`);
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('isPublic', String(isPublic));
     tags.forEach((tag) => formData.append('tags', tag));
 
-    const response = await axios.post<FileEntry>(`${this.config.host}/files/create`, formData, {
+    const { data: response } = await axios.post<FileEntry>(`${this.config.host}/files/create`, formData, {
       headers: { Authorization: `Bearer ${this.config.key}` },
-      responseType: 'json',
     });
 
-    this.tracks.push({ path, id: response.data.id });
+    this.tracks.push({ path, id: response.id });
   }
 
   private async updateFile(data: { id: string; path?: string; name?: string; tags?: string[] }) {
     const { id, path, name, tags } = data;
 
-    if (!path && !tags && !name) throw new Error('You must at least update one of the file informations');
+    if (!path && !tags && !name) throw new Error('At least one file property must be updated');
 
     const formData = new FormData();
 
     if (path) {
       const file = Bun.file(path);
-      const exists = await file.exists();
-      if (!exists) throw new Error(`File not found: ${path}`);
+      if (!(await file.exists())) throw new Error(`File not found: ${path}`);
       if (byteToMega(file.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error('File exceeds maximum allowed size');
       formData.append('file', file);
     }
@@ -149,7 +143,7 @@ export class ActionsExecuter {
     if (name) formData.append('name', name);
     if (tags) tags.forEach((tag) => formData.append('tags', tag));
 
-    await axios.put<FileEntry>(`${this.config.host}/files/update/${id}`, formData, {
+    await axios.put(`${this.config.host}/files/update/${id}`, formData, {
       headers: { Authorization: `Bearer ${this.config.key}` },
     });
   }
@@ -166,10 +160,14 @@ export class ActionsExecuter {
 
   private handleError(error: unknown, action: string): void {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) logger().error(`Insufficient permissions for ${action}`);
-      else if (error.response?.status === 404) logger().error(`Resource not found for ${action}`);
-      else if (error.response?.status === 429) logger().error(`Rate limits reached`);
-      else logger().error(`API error during ${action}`);
+      const status = error.response?.status;
+      if (status === 403) logger().error(`Insufficient permissions for ${action}`);
+      else if (status === 404) logger().error(`Resource not found for ${action}`);
+      else if (status === 429) logger().error('Rate limits reached');
+      else if (status === 400) {
+        const errorMessage = (error.response?.data as { errors: { message: string }[] }).errors.map((err) => err.message).join('\n');
+        logger().error(errorMessage);
+      } else logger().error(`API error during ${action}`);
     } else if (error instanceof Error) {
       logger().error(`Error during ${action}: ${error.message}`);
     } else {

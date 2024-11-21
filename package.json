@@ -5,6 +5,9 @@
     "api-build": "pnpm --filter @gstore-org/api build",
     "central-dev": "pnpm --filter @gstore-org/central dev",
     "central-build": "pnpm --filter @gstore-org/central build",
+    "cli-dev": "pnpm --filter @gstore-org/cli dev sync",
+    "cli-build": "pnpm --filter @gstore-org/cli build",
+    "build-public": "pnpm run cli-build",
     "version": "changeset version",
     "publish": "changeset publish",
     "change": "changeset"
