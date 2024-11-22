@@ -11,11 +11,9 @@ import vidTransformations from '@routes/vidTransformations/index';
 import infoRoute from '@routes/info/index';
 import { writeToLog } from '@utils/utils.general';
 import storesRoute from '@routes/store/index';
-import { envSchema } from '@shared/schema.global';
+import { env } from '@shared/env';
 
-envSchema.parse(process.env);
-
-const port = process.env.PORT;
+const port = env.PORT;
 
 const app = new OpenAPIHono();
 

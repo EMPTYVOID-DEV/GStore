@@ -2,8 +2,8 @@
   "compilerOptions": {
     "lib": ["ESNext"],
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "allowJs": true,
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
@@ -15,12 +15,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noEmit": true,
     "outDir": "./dist",
-    "rootDir": ".",
-    "paths": {
-      "@shared/*": ["./src/shared/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@helpers/*": ["./src/helpers/*"]
-    }
+    "rootDir": "."
   },
   "include": ["src/**/*", "eslint.config.js"],
   "exclude": ["node_modules", "dist"]

@@ -11,6 +11,7 @@ import { getFileEntry } from './utils.db';
 import { getFilePath, getFullName, bufferToFile, byteToMega } from './utils.general';
 import path from 'path';
 import { getMimeType } from 'hono/utils/mime';
+import { env } from '@shared/env';
 
 export function createCustomError(c: Context, message: string, field: string, reason: string) {
   return c.json(
@@ -57,7 +58,7 @@ export async function createFile(c: Context, storeId: string, file: File, isPubl
 
   if (res[0].status == 'rejected' || res[1].status == 'rejected') return c.text('Service Unavailable', 500);
 
-  return c.json(res[1].value);
+  return c.json(res[1].value[0]);
 }
 
 async function handleTransformationUpdate(c: Context, storeId: string, id: string, file: File, ext: string) {
@@ -98,8 +99,8 @@ export async function handleTransformationOutput(
   const filename = method.type == 'create' ? getFullName(method.metaData.name, ext) : getFullName('result', ext);
   const file = bufferToFile(data, filename, getMimeType(ext)!);
   if (method.type == 'return') return streamFile(c, file);
-  if (byteToMega(file.size) > process.env.MAX_FILE_SIZE)
-    return createCustomError(c, `The output has exceeded the Size limits ${process.env.MAX_FILE_SIZE} mb`, 'output', 'custom');
+  if (byteToMega(file.size) > env.MAX_FILE_SIZE)
+    return createCustomError(c, `The output has exceeded the Size limits ${env.MAX_FILE_SIZE} mb`, 'output', 'custom');
   if (method.type == 'update') return handleTransformationUpdate(c, storeId, method.id, file, ext);
   return createFile(c, storeId, file, method.metaData.isPublic, method.metaData.tags);
 }

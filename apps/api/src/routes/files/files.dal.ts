@@ -3,7 +3,7 @@ import { createSchema, listSchema, readTagsSchema, updateSchema, indexParamSchem
 import getAuthorizationMiddleware from '@middlewares/authorizationMiddleware';
 import { idParamSchema, zodErrorSchema } from '@shared/schema.global';
 import { fileTable } from '@database/schema';
-import { createInsertSchema } from 'drizzle-zod';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const readStaticRoute = createRoute({
   tags: ['public'],
@@ -117,7 +117,7 @@ export const createFileRoute = createRoute({
       description: 'Api returns created file',
       content: {
         'application/json': {
-          schema: createInsertSchema(fileTable),
+          schema: createSelectSchema(fileTable),
         },
       },
     },
@@ -152,7 +152,7 @@ export const listStoreFilesRoute = createRoute({
       description: 'Api returns queried files',
       content: {
         'application/json': {
-          schema: createInsertSchema(fileTable).array(),
+          schema: createSelectSchema(fileTable).array(),
         },
       },
     },
@@ -187,7 +187,7 @@ export const deleteFileRoute = createRoute({
       description: 'Api returns deleted file.',
       content: {
         'application/json': {
-          schema: createInsertSchema(fileTable),
+          schema: createSelectSchema(fileTable),
         },
       },
     },
@@ -233,7 +233,7 @@ export const updateFileRoute = createRoute({
       description: 'Api returns the updated file',
       content: {
         'application/json': {
-          schema: createInsertSchema(fileTable),
+          schema: createSelectSchema(fileTable),
         },
       },
     },

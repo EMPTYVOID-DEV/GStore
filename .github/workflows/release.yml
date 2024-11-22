@@ -26,8 +26,16 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
+      - name: Setuping bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "latest"
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build Public Packages
+        run: pnpm run build-public
 
       - name: Create a Release
         id: changesets
