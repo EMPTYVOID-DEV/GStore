@@ -1,6 +1,4 @@
 <script lang="ts">
-	const storeId: string = "Asrww03C"
-
 	export let data: { files: Array<{ id: string; name: string; extension: string }> };
 
 	$: files = data.files;
