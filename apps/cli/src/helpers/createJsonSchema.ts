@@ -1,15 +1,16 @@
-import { configSchema, tracksSchema } from '../shared/zodSchemas';
+import { configSchema, tracksSchema } from '../shared/zodSchemas.js';
 import path from 'path';
-import zodToJson from 'zod-to-json-schema';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import fsExtra from 'fs-extra';
 
 export async function createConfigSchema() {
-  const configJsonSchema = zodToJson(configSchema, 'Config json file schema');
+  const configJsonSchema = zodToJsonSchema(configSchema, 'Config json file schema');
   const schemaPath = path.join(process.cwd(), 'config.schema.json');
-  Bun.write(schemaPath, JSON.stringify(configJsonSchema));
+  await fsExtra.writeFile(schemaPath, JSON.stringify(configJsonSchema));
 }
 
 export async function createTracksSchema() {
-  const configJsonSchema = zodToJson(tracksSchema, 'Tracking json file schema');
+  const tracksJsonSchema = zodToJsonSchema(tracksSchema, 'Tracking json file schema');
   const schemaPath = path.join(process.cwd(), 'tracking.schema.json');
-  Bun.write(schemaPath, JSON.stringify(configJsonSchema));
+  await fsExtra.writeFile(schemaPath, JSON.stringify(tracksJsonSchema));
 }

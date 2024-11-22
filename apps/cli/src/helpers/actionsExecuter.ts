@@ -1,10 +1,11 @@
 import axios from 'axios';
 import ora from 'ora';
-import { access, readdir } from 'fs/promises';
+import { readdir } from 'fs/promises';
 import Path from 'path';
-import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '../shared/types';
-import { byteToMega, errorExit, loadJson, logger, validateSchema } from '../shared/utils';
-import { tracksSchema } from '../shared/zodSchemas';
+import fsExtra from 'fs-extra';
+import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '../shared/types.js';
+import { pathToFile, byteToMega, errorExit, getFileInfo, loadJson, logger, validateSchema } from '../shared/utils.js';
+import { tracksSchema } from '../shared/zodSchemas.js';
 
 export class ActionsExecuter {
   private config: ConfigJson;
@@ -27,7 +28,7 @@ export class ActionsExecuter {
   async flashTracks() {
     if (!this.tracking) return;
     const content = JSON.stringify({ tracks: this.tracks });
-    await Bun.write(this.config.trackingFile!, content);
+    await fsExtra.writeFile(this.config.trackingFile!, content);
   }
 
   async verifyKey(): Promise<void> {
@@ -87,11 +88,8 @@ export class ActionsExecuter {
   private async createDir(data: { path: string; isPublic: boolean; tags: string[]; ignore: string[] }) {
     const { path, isPublic, tags, ignore } = data;
 
-    try {
-      await access(path);
-    } catch {
-      throw new Error(`Directory does not exist: ${path}`);
-    }
+    const exists = await fsExtra.exists(path);
+    if (!exists) throw new Error(`Directory does not exist: ${path}`);
 
     const entries = await readdir(path, { withFileTypes: true });
     for (const entry of entries) {
@@ -100,7 +98,7 @@ export class ActionsExecuter {
       if (entry.isFile()) {
         const fullPath = Path.join(path, entry.name);
         await this.createFile({ path: fullPath, isPublic, tags });
-        logger().success(`${entry.name} created successfully`);
+        logger().success(`\n ${entry.name} created successfully`);
       }
     }
   }
@@ -110,11 +108,14 @@ export class ActionsExecuter {
 
     if (this.existsInTracks(path)) throw new Error(`File is already tracked: ${path}`);
 
-    const file = Bun.file(path);
-    if (!(await file.exists())) throw new Error(`File not found: ${path}`);
-    if (byteToMega(file.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error(`File exceeds maximum size: ${path}`);
+    const exists = await fsExtra.exists(path);
+    if (!exists) throw new Error(`File does not exist: ${path}`);
+
+    const stat = await getFileInfo(path);
+    if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error(`File exceeds maximum size: ${path}`);
 
     const formData = new FormData();
+    const file = await pathToFile(path, stat.fileName, stat.mimeType);
     formData.append('file', file);
     formData.append('isPublic', String(isPublic));
     tags.forEach((tag) => formData.append('tags', tag));
@@ -134,9 +135,13 @@ export class ActionsExecuter {
     const formData = new FormData();
 
     if (path) {
-      const file = Bun.file(path);
-      if (!(await file.exists())) throw new Error(`File not found: ${path}`);
-      if (byteToMega(file.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error('File exceeds maximum allowed size');
+      const exists = await fsExtra.exists(path);
+      if (!exists) throw new Error(`File does not exist: ${path}`);
+
+      const stat = await getFileInfo(path);
+      if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error('File exceeds maximum allowed size');
+
+      const file = await pathToFile(path, stat.fileName, stat.mimeType);
       formData.append('file', file);
     }
 

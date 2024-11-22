@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { actionsSchema, configSchema, tracksSchema } from './zodSchemas';
+import type { actionsSchema, configSchema, tracksSchema } from './zodSchemas.js';
 
 export type SyncOptions = { configPath: string };
 

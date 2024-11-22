@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
-import { generateSchemaCommand } from './commands/generateSchema';
-import { syncCommand } from './commands/sync';
-import type { CommandName, SyncOptions } from './shared/types';
-import { errorExit } from './shared/utils';
+import { generateSchemaCommand } from './commands/generateSchema.js';
+import { syncCommand } from './commands/sync.js';
+import type { CommandName, SyncOptions } from './shared/types.js';
+import { errorExit } from './shared/utils.js';
 import { Command } from 'commander';
 
 export async function main() {
@@ -34,8 +34,8 @@ export async function main() {
 
 main()
   .catch((e) => {
+    console.log(e);
     errorExit('Something went wrong');
-    console.log(JSON.stringify(e));
   })
   .then(() => {
     process.exit(0);

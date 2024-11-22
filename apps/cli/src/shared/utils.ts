@@ -1,5 +1,8 @@
 import chalk from 'chalk';
 import type { ZodError, ZodSchema } from 'zod';
+import fsExtra from 'fs-extra';
+import path from 'path';
+import mime from 'mime-types';
 
 export function logger() {
   return {
@@ -36,10 +39,10 @@ export function byteToMega(bytes: number) {
 }
 
 export async function loadJson(path: string, name: string): Promise<Record<string, unknown>> {
-  const file = Bun.file(path);
-  const exists = await file.exists();
+  const exists = await fsExtra.exists(path);
   if (!exists) errorExit(`${name} file does not exit`);
-  const content = await file.text();
+  const buffer = await fsExtra.readFile(path);
+  const content = buffer.toString();
   try {
     return JSON.parse(content);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,4 +50,26 @@ export async function loadJson(path: string, name: string): Promise<Record<strin
     logger().error(`Error occured while parsing the ${name} file`);
     process.exit(1);
   }
+}
+
+export function bufferToUint8Array(buffer: Buffer) {
+  return Uint8Array.from(buffer);
+}
+
+export async function pathToFile(path: string, fileName: string, type: string) {
+  const buffer = await fsExtra.readFile(path);
+  return new File([bufferToUint8Array(buffer)], fileName, { type });
+}
+export async function getFileInfo(filePath: string) {
+  const stat = await fsExtra.stat(filePath);
+  const fileName = path.basename(filePath);
+  const fileExtension = path.extname(filePath).toLowerCase();
+  const mimeType = mime.lookup(filePath) || 'unknown';
+
+  return {
+    fileName,
+    fileExtension,
+    mimeType,
+    size: stat.size,
+  };
 }
