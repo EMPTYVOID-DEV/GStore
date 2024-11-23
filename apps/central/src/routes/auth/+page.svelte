@@ -3,17 +3,16 @@
 	import SyncButton from '$client/components/button/syncButton.svelte';
 	import ReactiveInput from '$client/components/input/reactiveInput.svelte';
 	import { showToast } from '$client/utils.client';
-	import { emailSchema, getValidator, passwordSchema, usernameSchema } from '$global/zod';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	import { getValidator, passwordSchema, usernameSchema } from '$global/zod';
 	import { Toaster } from 'svelte-sonner';
 	import { quadInOut } from 'svelte/easing';
 	import { fade, fly } from 'svelte/transition';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
-	const emailValidator = getValidator(emailSchema);
 	const usernameValidator = getValidator(usernameSchema);
 	const passwordValidator = getValidator(passwordSchema);
 
-	const handleAction: SubmitFunction = async () => {
+	const handleAction: SubmitFunction = async ({ formData }) => {
 		return ({ result, update }) => {
 			if (result.type === 'failure' && result.data) {
 				showToast('Error', result.data.message, 'danger');
@@ -21,8 +20,6 @@
 			update({ reset: false });
 		};
 	};
-
-	let state: 'Sign up' | 'Sign in' = 'Sign up';
 </script>
 
 <div class="auth">
@@ -31,44 +28,28 @@
 		<h1>GStore</h1>
 	</a>
 
-	{#key state}
-		<form
-			action={`?/${state}`}
-			method="post"
-			use:enhance={handleAction}
-			in:fade={{ duration: 800, easing: quadInOut }}
-		>
-			{#if state === 'Sign up'}
-				<ReactiveInput
-					inputType="text"
-					label="Username"
-					checkFunction={usernameValidator}
-					name="username"
-				/>
-			{/if}
+	<form
+		action="?/login"
+		method="post"
+		use:enhance={handleAction}
+		in:fade={{ duration: 800, easing: quadInOut }}
+	>
+		<ReactiveInput
+			inputType="text"
+			label="Username"
+			checkFunction={usernameValidator}
+			name="username"
+		/>
 
-			<ReactiveInput inputType="email" label="Email" checkFunction={emailValidator} name="email" />
+		<ReactiveInput
+			inputType="password"
+			label="Password"
+			checkFunction={passwordValidator}
+			name="password"
+		/>
 
-			<ReactiveInput
-				inputType="password"
-				label="Password"
-				checkFunction={passwordValidator}
-				name="password"
-			/>
-
-			<span class="toggle-text">
-				{#if state === 'Sign up'}
-					You already have an account?
-					<span class="control" on:click={() => (state = 'Sign in')}>Login</span>
-				{:else}
-					Don't have an account?
-					<span class="control" on:click={() => (state = 'Sign up')}>Sign up</span>
-				{/if}
-			</span>
-
-			<SyncButton text={state} --padding-block="0.8rem" --padding-inline="2rem" />
-		</form>
-	{/key}
+		<SyncButton text="Login" --padding-block="0.8rem" --padding-inline="2rem" />
+	</form>
 </div>
 
 <Toaster duration={3500} expand />
@@ -115,25 +96,6 @@
 		align-items: center;
 		gap: 1rem;
 	}
-
-	.toggle-text {
-		color: var(--foregroundColor);
-		text-align: center;
-		margin-top: 0.5rem;
-	}
-
-	.control {
-		color: var(--primaryColor);
-		cursor: pointer;
-		margin-left: 0.5rem;
-		font-weight: 500;
-		transition: opacity 0.2s ease;
-	}
-
-	.control:hover {
-		opacity: 0.8;
-	}
-
 	@media screen and (max-width: 768px) {
 		.auth form {
 			width: 90%;

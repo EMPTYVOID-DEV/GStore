@@ -3,37 +3,45 @@
 	import DefaultTabs from '$client/components/tabs/defaultTabs.svelte';
 	import ProfileIcon from '$client/icons/profileIcon.svelte';
 	import StorageIcon from '$client/icons/storageIcon.svelte';
-	import { getValidator, storeNameSchema } from '$global/zod.js';
 	import StoresTab from './components/storesTab.svelte';
 	import ProfileTab from './components/profileTab.svelte';
+	import AdminIcon from '$client/icons/adminIcon.svelte';
+	import AdmintTab from './components/admintTab.svelte';
 
 	export let data;
 
 	let activeTab = 0;
+
 	const tabs: { icon: iconComponent; title: string }[] = [
 		{ icon: StorageIcon, title: 'Stores' },
 		{ icon: ProfileIcon, title: 'Profile' }
 	];
-	const storeNameValidator = getValidator(storeNameSchema);
-	function handleChange({ currentTarget }: Event & { currentTarget: { value: string } }) {
-		stores = data.stores.filter((store) => store.name.includes(currentTarget.value));
-	}
-	$: stores = data.stores;
+
+	if (data.isAdmin) tabs.splice(1, 0, { title: 'Admin', icon: AdminIcon });
 </script>
 
 <div class="dashboard">
 	<DefaultTabs bind:activeTab {tabs} />
-	{#if activeTab == 0}
-		<StoresTab {stores} {handleChange} {storeNameValidator} />
+
+	{#if data.isAdmin}
+		{#if activeTab === 0}
+			<StoresTab />
+		{:else if activeTab === 1}
+			<AdmintTab />
+		{:else}
+			<ProfileTab />
+		{/if}
+	{:else if activeTab === 0}
+		<StoresTab />
 	{:else}
-		<ProfileTab username={data.username} />
+		<ProfileTab />
 	{/if}
 </div>
 
 <style>
 	.dashboard {
-		width: 100svw;
-		height: 100svh;
+		width: 100vw;
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		background: var(--backgroundColor);

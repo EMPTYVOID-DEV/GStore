@@ -2,8 +2,6 @@ import type { ZodSchema } from 'zod';
 import { z } from 'zod';
 import type { ActionStatus } from './types.global';
 
-export const emailSchema = z.string().email('Invalid email address');
-
 export const isNumberSchema = z.string().max(1).regex(/^\d$/);
 
 export const passwordSchema = z

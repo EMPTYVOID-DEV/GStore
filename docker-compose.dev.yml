@@ -29,21 +29,6 @@ services:
       - "--accesslog.filepath=/var/log/access.log"
       - "--accesslog.format=json"
 
-  mailpit:
-    image: axllent/mailpit:latest
-    restart: unless-stopped
-    networks:
-      - web
-    expose:
-      - 1025 # SMTP port
-      - 8025 # Web UI port
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.mailpit-ui.loadbalancer.server.port=8025"
-      - "traefik.http.routers.mailpit.rule=Host(`mail.localhost`)"
-      - "traefik.http.routers.mailpit.service=mailpit-ui"
-      - "traefik.http.routers.mailpit.entrypoints=web"
-
   central_app:
     build: ./apps/central
     restart: unless-stopped
@@ -51,10 +36,6 @@ services:
       - web
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - SMTP_HOST=mailpit
-      - SMTP_PORT=1025
-      - SMTP_EMAIL=dev@localhost
-      - SMTP_REQUIRE_AUTH=false
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
       - ORIGIN=http://central.localhost

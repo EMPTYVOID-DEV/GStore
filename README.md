@@ -115,7 +115,6 @@ The steps to run GStore will vary based on your setup. Below are the general ste
 #### Note
 
 1. Docker compose will build and run the central app , the api , postgres and traefik. For other apps each can be run on it own.
-2. When running the GStore locally it will use docker container for mailpit you can access with `mail.localhost`.
 
 # V2 Features
 
