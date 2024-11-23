@@ -49,12 +49,6 @@ services:
       - web
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - SMTP_HOST=${SMTP_HOST:?err}
-      - SMTP_PORT=${SMTP_PORT:?err}
-      - SMTP_EMAIL=${SMTP_EMAIL:?err}
-      - SMTP_REQUIRE_AUTH=${SMTP_REQUIRE_AUTH:-false}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
       - ORIGIN=https://central.${DOMAIN}

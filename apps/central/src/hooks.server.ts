@@ -6,7 +6,6 @@ import {
 	deleteSessionTokenCookie
 } from '$server/utils/auth';
 import { checkPath } from '$server/utils/general';
-
 import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { and, eq } from 'drizzle-orm';
@@ -41,13 +40,9 @@ export const auth: Handle = async ({ event, resolve }) => {
 export const redirects: Handle = async ({ event, resolve }) => {
 	const user = event.locals.user;
 	const pathname = event.url.pathname;
-	if (!user && checkPath(pathname, 'start', ['/dashboard'])) {
-		redirect(303, '/auth');
-	}
+	if (!user && checkPath(pathname, 'start', ['/dashboard'])) redirect(303, '/auth');
 
-	if (user && checkPath(pathname, 'start', ['/auth'])) {
-		redirect(303, '/dashboard');
-	}
+	if (user && checkPath(pathname, 'start', ['/auth'])) redirect(303, '/dashboard');
 
 	if (user && event.params.store) {
 		const storeId = event.params.store;

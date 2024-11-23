@@ -3,7 +3,6 @@ import { sql } from 'drizzle-orm';
 import {
 	pgTable,
 	text,
-	primaryKey,
 	timestamp,
 	boolean,
 	varchar,
@@ -15,8 +14,12 @@ import {
 import { nanoid } from 'nanoid';
 
 export const userTable = pgTable('user', {
-	id: text('id').notNull().primaryKey(),
-	username: text('username').notNull()
+	id: text('id')
+		.$default(() => nanoid(8))
+		.primaryKey(),
+	username: text('username').notNull().unique(),
+	password: text('password').notNull(),
+	admin: boolean('admin').notNull()
 });
 
 export const sessionTable = pgTable('session', {
@@ -26,22 +29,6 @@ export const sessionTable = pgTable('session', {
 		.references(() => userTable.id, { onDelete: 'cascade' }),
 	expiresAt: timestamp('expires_at').notNull()
 });
-
-export const keyTable = pgTable(
-	'key',
-	{
-		userId: text('user_id')
-			.notNull()
-			.references(() => userTable.id, {
-				onDelete: 'cascade'
-			}),
-		provider_name: text('provider_name').notNull(),
-		provider_id: text('provider_id').notNull(),
-		secret: text('secret'),
-		verified: boolean('verified')
-	},
-	(table) => [primaryKey({ columns: [table.provider_id, table.provider_name] })]
-);
 
 export const storeTable = pgTable(
 	'store',

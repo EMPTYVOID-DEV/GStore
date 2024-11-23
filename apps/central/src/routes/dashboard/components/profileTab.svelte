@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import SyncButton from '$client/components/button/syncButton.svelte';
 	import FormWrapper from '$client/components/other/formWrapper.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -8,11 +9,10 @@
 			update();
 		};
 	};
-	export let username: string = '';
 </script>
 
 <h2 class="welcome">
-	Welcome <span>{username}</span>
+	Welcome <span>{$page.data.username}</span>
 </h2>
 
 <FormWrapper actionName="?/logout" action={logout} --justify="flex-end">

@@ -1,20 +1,14 @@
-import type {
-	apiKeyTable,
-	keyTable,
-	sessionTable,
-	storeTable,
-	userTable
-} from '$server/database/schema';
+import type { apiKeyTable, sessionTable, storeTable, userTable } from '$server/database/schema';
 
-export type Session = typeof sessionTable.$inferInsert;
+export type Session = typeof sessionTable.$inferSelect;
 
-export type User = typeof userTable.$inferInsert;
+export type User = typeof userTable.$inferSelect;
 
-export type Key = typeof keyTable.$inferInsert;
+export type InsertUser = typeof userTable.$inferInsert;
 
-export type Store = typeof storeTable.$inferInsert;
+export type Store = typeof storeTable.$inferSelect;
 
-export type ApiKey = typeof apiKeyTable.$inferInsert;
+export type ApiKey = typeof apiKeyTable.$inferSelect;
 
 export type Permissions =
 	| 'create'
