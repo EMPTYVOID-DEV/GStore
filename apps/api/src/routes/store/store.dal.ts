@@ -1,7 +1,6 @@
 import { createRoute } from '@hono/zod-openapi';
 import { createSchema } from './store.schema';
-import { createInsertSchema } from 'drizzle-zod';
-import { storeTable } from '@database/schema';
+import { selectStoreSchema } from 'db';
 import { idParamSchema, zodErrorSchema } from '@shared/schema.global';
 
 export const createStoreRoute = createRoute({
@@ -22,7 +21,7 @@ export const createStoreRoute = createRoute({
       description: 'The store is created successfully',
       content: {
         'application/json': {
-          schema: createInsertSchema(storeTable).pick({ id: true }),
+          schema: selectStoreSchema.pick({ id: true }),
         },
       },
     },
@@ -56,7 +55,7 @@ export const deleteStoreRoute = createRoute({
       description: 'The store is deleted successfully',
       content: {
         'application/json': {
-          schema: createInsertSchema(storeTable),
+          schema: selectStoreSchema,
         },
       },
     },

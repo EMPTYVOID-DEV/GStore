@@ -4,8 +4,7 @@ import type { AuthorizationBinding } from '@shared/types.global';
 import { createFfmpegInstance, getFilePath } from '@utils/utils.general';
 import { handleTransformationOutput } from '@utils/utils.hono';
 import { getFileEntry } from '@utils/utils.db';
-import { inArray } from 'drizzle-orm';
-import { fileTable } from '@database/schema';
+import { fileTable, inArray } from 'db';
 
 export const extractAudioHandler: RouteHandler<typeof extractAudioRoute, AuthorizationBinding> = async (c) => {
   const storeId = c.get('storeId');

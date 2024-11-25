@@ -2,8 +2,7 @@ import { createRoute } from '@hono/zod-openapi';
 import { createSchema, listSchema, readTagsSchema, updateSchema, indexParamSchema } from './files.schema';
 import getAuthorizationMiddleware from '@middlewares/authorizationMiddleware';
 import { idParamSchema, zodErrorSchema } from '@shared/schema.global';
-import { fileTable } from '@database/schema';
-import { createSelectSchema } from 'drizzle-zod';
+import { selectFileSchema } from 'db';
 
 export const readStaticRoute = createRoute({
   tags: ['public'],
@@ -117,7 +116,7 @@ export const createFileRoute = createRoute({
       description: 'Api returns created file',
       content: {
         'application/json': {
-          schema: createSelectSchema(fileTable),
+          schema: selectFileSchema,
         },
       },
     },
@@ -152,7 +151,7 @@ export const listStoreFilesRoute = createRoute({
       description: 'Api returns queried files',
       content: {
         'application/json': {
-          schema: createSelectSchema(fileTable).array(),
+          schema: selectFileSchema.array(),
         },
       },
     },
@@ -187,7 +186,7 @@ export const deleteFileRoute = createRoute({
       description: 'Api returns deleted file.',
       content: {
         'application/json': {
-          schema: createSelectSchema(fileTable),
+          schema: selectFileSchema,
         },
       },
     },
@@ -233,7 +232,7 @@ export const updateFileRoute = createRoute({
       description: 'Api returns the updated file',
       content: {
         'application/json': {
-          schema: createSelectSchema(fileTable),
+          schema: selectFileSchema,
         },
       },
     },

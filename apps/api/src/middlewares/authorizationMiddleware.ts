@@ -1,8 +1,6 @@
-import { db } from '@database/db';
-import { apiKeyTable } from '@database/schema';
-import type { Permissions } from '@shared/types.global';
+import { db, apiKeyTable, eq } from 'db';
+import type { Permissions } from 'db';
 import type { AuthorizationBinding } from '@shared/types.global';
-import { eq } from 'drizzle-orm';
 import { createMiddleware } from 'hono/factory';
 
 function getAuthorizationMiddleware(permission: Permissions) {

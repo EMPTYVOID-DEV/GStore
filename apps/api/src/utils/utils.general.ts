@@ -7,13 +7,11 @@ import type archiver from 'archiver';
 import type { Context } from 'hono';
 import sharp from 'sharp';
 import { left, right } from 'fp-ts/Either';
-import { fileTable } from '@database/schema';
-import { eq } from 'drizzle-orm';
+import { fileTable, inArray, eq } from 'db';
 import { PDFDocument } from 'pdf-lib';
 import Ffmpeg from 'fluent-ffmpeg';
 import tmp from 'tmp';
 import { promisify } from 'util';
-import { inArray } from 'drizzle-orm';
 import { env } from '@shared/env';
 
 export function createTmpFile(options: tmp.FileOptions = {}) {

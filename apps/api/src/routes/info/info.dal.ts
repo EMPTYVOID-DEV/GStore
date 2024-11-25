@@ -1,7 +1,6 @@
-import { apiKeyTable } from '@database/schema';
+import { selectApiKeySchema } from 'db';
 import { createRoute } from '@hono/zod-openapi';
 import { envSchema } from '@shared/env';
-import { createSelectSchema } from 'drizzle-zod';
 import { keyInfoSchema } from './info.schema';
 
 export const apiInfoRoute = createRoute({
@@ -26,7 +25,7 @@ export const keyInfoRoute = createRoute({
       description: 'Returning the api the informations',
       content: {
         'application/json': {
-          schema: createSelectSchema(apiKeyTable),
+          schema: selectApiKeySchema,
         },
       },
     },

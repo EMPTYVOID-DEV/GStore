@@ -1,6 +1,4 @@
-import { db } from '@database/db';
-import { fileTable } from '@database/schema';
-import { and, eq, SQL } from 'drizzle-orm';
+import { db, fileTable, and, eq, SQL } from 'db';
 import { none, some } from 'fp-ts/Option';
 import type { Option } from 'fp-ts/Option';
 
