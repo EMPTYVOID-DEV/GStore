@@ -1641,6 +1641,7 @@ snapshots:
 
   '@gstore-org/db@file:../../packages/db':
     dependencies:
+      '@node-rs/argon2': 1.8.3
       dotenv: 16.4.5
       drizzle-orm: 0.36.0(pg@8.13.1)
       drizzle-zod: 0.5.1(drizzle-orm@0.36.0(pg@8.13.1))(zod@3.23.8)

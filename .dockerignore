@@ -1,0 +1,27 @@
+# Ignore environment files
+**/.env
+**/.env.*
+**/*.env
+
+# Ignore build and cache directories
+**/build
+**/dist
+
+# Ignore dependencies 
+**/node_modules/
+
+
+assets/
+
+# Ignore logs
+**/*.log
+**/logs/
+
+# Ignore Docker-specific files and caches
+**/Dockerfile*
+**/docker-compose.*.yml
+.dockerignore
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

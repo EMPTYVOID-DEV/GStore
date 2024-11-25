@@ -1,128 +1,137 @@
 # GStore
 
-GStore is a self-hosted storage solution for institutions, companies, and developers. It provides a central management interface and API to handle file storage, with advanced features like file transformations and fine-grained access control.
+GStore is a self-hosted storage solution for institutions, companies, and developers. It provides a centralized management interface and API for file storage, featuring advanced capabilities like file transformations and granular access control.
 
 ## Features
 
-- **Central App**
+- **Central Application**
   - User authentication
-  - Manage virtual stores (create, delete)
-  - Create API keys with specific permissions and expiration dates
-  - View files in stores
+  - User management through an admin account
+  - Virtual store management (creation and deletion)
+  - API key management with customizable permissions and expiration
+  - File browsing across stores
 - **Storage API**
-  - Full file operations (create, delete, update, read, list files)
-  - Built-in transformations (e.g., merge PDFs, image resizing, video encoding)
-    - Image transformations
-    - PDF transformations
-    - Video transformations
-  - Support for public and private files
+  - Complete file operations (create, read, update, delete, list)
+  - Built-in file transformations
+    - Image processing
+    - PDF manipulation
+    - Video encoding
+  - Public and private file support
   - API key authentication
-  - Scaler UI documentation
-  - Zod validation for all request parts (parameters, query, body)
-  - Rate limiting and file size restrictions
-- **Extendability**
-  - We will have other apps on the future that extend the functionality of the api.
-  - Examples can be a backup cli or desktop app for visual management of the files.
+  - Comprehensive API documentation with Swagger UI
+  - Request validation using Zod (parameters, query, body)
+  - Rate limiting and file size controls
+- **Additional Applications**
+  - Command-line interface for automation and CI/CD integration
+  - Desktop application for visual file management (in development)
 
 ## Architecture
 
 ![Architecture v1](./assets/architectureV1.png)
 
-- **Central App**: A SvelteKit app for store management (`central.domain`)
-- **API**: A Hono Bun server for file operations (`api.domain`)
-- **Database**: PostgreSQL for storing file metadata, store information, API keys, and user details
-- **Proxy**: Traefik for routing and serving as an API gateway
-- **Storage**: File system-based storage
+- **Central Application**: SvelteKit-based management interface (`central.domain`)
+- **API**: Hono Bun server for file operations (`api.domain`)
+- **Database**: PostgreSQL for metadata storage
+- **Proxy**: Traefik for routing and API gateway functionality
+- **Storage**: File system-based storage solution
 
-## How It Works
+## Implementation Details
 
-### Flow
+### Workflow
 
-GStore follows a typical storage flow:
-
-1. Log in to the central app
-2. Create a store
-3. Create an API key
-4. Use the API key to access the API server endpoints
+1. Access the central application
+2. Create a storage instance
+3. Generate an API key
+4. Interact with API endpoints using the generated key!
 
 ![Storage Flow](./assets/storage_flow.png)
 
-### Storage Mechanism
+#### Important Notes
 
-GStore stores file metadata in a database while saving the actual file content in the file system. Each file is assigned a unique identifier called an **index**. File metadata includes:
+1. Usernames are unique and stored in lowercase
+2. Admin account creation occurs during database migration. You just need to specify admin username and password in .env.
+3. Admins can create additional user accounts
+
+### Storage System
+
+GStore maintains file metadata in a database while storing actual content in the file system. File metadata :
 
 - Name
 - Extension
 - Size
-- Creation date
-- Public/private status
+- Creation timestamp
+- Visibility status
 - Tags
-- Store ID
+- Store identifier
+- Index
 
-Files can have tags, which are useful for organizing and linking related files (e.g., ["images", "png"]). There is an endpoint that allows you to download a zip of all files with the same set of tags.
+Files can be tagged for organization (e.g., ["images", "png"]) and downloaded collectively by tag groups. The system supports both public (statically accessible) and private files.
 
-Files can be either public or private. Public files are served statically, meaning anyone can access them if they know the file's index.
+Each file will have a unique identifier called **index** which is the name of file in the file system.
 
 ### Transformations
 
-Transformations are operations performed on files. The files used in transformations must already exist in the specified store. Many transformations share a general format for the request body:
-
-```json
+File transformations operate on existing store content. Most transformations follow this request format:`json
 {
-  "id": "EILvhPP_",
-  "outputMethod": { "type": "return" }
-}
-```
+  "id": "EILvhPP_",  "outputMethod": { "type": "return" }
+}`
 
-- `id`: The ID of the file being transformed
-- `outputMethod`: Specifies what to do with the result (either **return** it, **create** a new file with it, or **update** a file with same extension.)
+- `id`: Target file identifier
+- `outputMethod`: Result handling specification (return, create new file, or update existing file)
 
-Some transformations require additional information, such as a **sigma** value for image blurring. Others, like updating PDF metadata, may have different request formats.
+Some transformations may require additional parameters or use different request formats.
 
-## Folder Structure
+## Project Structure
 
-The project follows a monorepo structure:
+The project uses a monorepo organization:
 
 ```
 gstore/
 ├── apps/
 │   ├── api/
+│   ├── cli/
+│   ├── desktop/
 │   └── central/
-├── .env.example
-├── docker-compose.prod.yml
-└── docker-compose.dev.yml
+├── packages/
+│   └── db/
+├── docker/
+└── .env.example
 ```
 
-Each workspace can be deployed separately using its own Dockerfile or together using the root `docker-compose.prod.yml` file. You'll find `.env.example` files in each workspace, along with a **README** file for more details.
+1. Applications directory containing all components
+2. Shared packages for common functionality
+3. Docker files
+4. Under each workspace you will have a readme and optionally a .env.example.
 
 ## Usage
 
-The steps to run GStore will vary based on your setup. Below are the general steps for running GStore locally and in production.
+How to run GStore may vary based on your setup. The following are our recommendations for running GStore in development and production.
 
-### Local Setup
+### Development Environment
 
-1. Clone the repo: `git clone git@github.com:EMPTYVOID-DEV/g-store.git`
-2. Create a `.env` file using the `.env.example` template
-3. Run: `sudo docker-compose -f docker-compose.dev.yml up`
+1. `git clone git@github.com:EMPTYVOID-DEV/g-store.git`
+2. Copy `.env.example` to `.env` and configure
+3. `docker-compose -f docker/docker-compose.dev.yml --env-file=.env up`
 
-### Production Setup
+### Production Environment
 
-1. Get a public domain name
-2. Configure DNS records for your domain to include `api.domain`, `central.domain`, and `traefik.domain`, pointing them to your server’s IP address
-3. Create a `.env` file using the `.env.example` template
-4. Run: `sudo docker-compose -f docker-compose.prod.yml up`. Traefik will automatically handle Let's Encrypt SSL certificates for your domains
+1. Configure domain name
+2. Set up DNS records for `api.domain`, `central.domain`, and `traefik.domain`
+3. Configure `.env` file
+4. `docker-compose -f docker/docker-compose.prod.yml --env-file=.env up`
 
-#### Note
+## Additional Applications
 
-1. Docker compose will build and run the central app , the api , postgres and traefik. For other apps each can be run on it own.
+- **Command Line Interface**: Available for automation tasks, cron jobs, and CI/CD workflows
+- **Desktop Application**: Currently under development, provides visual interface for API interaction
 
-# V2 Features
+## Future Enhancements (V2)
 
-- **Enhanced Monitoring**: Integration with the ELK stack for comprehensive logging
-- **Auto-scaling**:
-  - KEDA integration for automatic scaling based on requests
-  - NFS storage support for distributed file access
+- **Advanced Monitoring**: ELK stack integration
+- **Scaling Capabilities**:
+  - KEDA-based request scaling
+  - NFS storage for distributed systems
 
 ## License
 
-MIT License. See the [LICENSE](https://opensource.org/license/mit) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://opensource.org/license/mit) for details.
