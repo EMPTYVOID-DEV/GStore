@@ -30,19 +30,7 @@ export const actions: Actions = {
 			return fail(404, { message: 'Invalid API key. No associated store found.' });
 		}
 
-		const storeId = apikey[0].storeId;
-
-		const store = await db
-			.select()
-			.from(storeTable)
-			.where(eq(storeTable.id, storeId))
-			.limit(1);
-
-		if (store.length == 0) {
-			return fail(404, { message: 'No store associated with this API key.' });
-		}
-
-		throw redirect(303, `/dashboard/${store[0].id}`);
+		throw redirect(303, `/dashboard/${apikey[0].key}`);
 
 	}
 };
