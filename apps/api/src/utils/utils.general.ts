@@ -5,7 +5,7 @@ import { createReadStream } from 'fs';
 import { readFile, appendFile } from 'fs/promises';
 import type archiver from 'archiver';
 import type { Context } from 'hono';
-// import sharp from 'sharp';
+import sharp from 'sharp';
 import { left, right } from 'fp-ts/Either';
 import { fileTable, inArray, eq } from 'db';
 import { PDFDocument } from 'pdf-lib';
@@ -65,7 +65,7 @@ export async function createSharpInstance(c: Context, storeId: string, id: strin
 
   const path = getFilePath(fileEntry.value.isPublic, fileEntry.value.index, fileEntry.value.extension, storeId);
 
-  return right({ sharp: path, entry: fileEntry.value });
+  return right({ sharp: sharp(path, { failOn: 'none' }), entry: fileEntry.value });
 }
 
 export async function createPdfInstance(c: Context, storeId: string, id: string) {
