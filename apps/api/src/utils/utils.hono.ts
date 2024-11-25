@@ -1,8 +1,6 @@
-import { db } from '@database/db';
-import { fileTable } from '@database/schema';
+import { db, and, eq, fileTable } from 'db';
 import type { z } from '@hono/zod-openapi';
 import type { outputMethod } from '@shared/schema.global';
-import { and, eq } from 'drizzle-orm';
 import type { Context } from 'hono';
 import { File } from 'buffer';
 import { stream as honoStream } from 'hono/streaming';

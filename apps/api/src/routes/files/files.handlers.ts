@@ -11,9 +11,7 @@ import {
 import type { RouteHandler } from '@hono/zod-openapi';
 import { stream as honoStream } from 'hono/streaming';
 import { appendFileToArchive, bufferToUint8Array, getFilePath } from '@utils/utils.general';
-import { db } from '@database/db';
-import { and, eq, arrayContains, asc, SQL, desc } from 'drizzle-orm';
-import { fileTable } from '@database/schema';
+import { and, eq, arrayContains, asc, SQL, desc, db, fileTable } from 'db';
 import archiver from 'archiver';
 import path from 'path';
 import { unlink } from 'fs/promises';

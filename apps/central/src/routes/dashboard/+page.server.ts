@@ -1,13 +1,11 @@
 import { env } from '$env/dynamic/private';
-import type { InsertUser } from '$global/types.global';
 import { getValidator, passwordSchema, storeNameSchema, usernameSchema } from '$global/zod';
-import { db } from '$server/database/db';
-import { storeTable, userTable } from '$server/database/schema';
+import type { InsertUser } from 'db';
+import { db, storeTable, userTable, eq } from 'db';
 import { deleteSessionTokenCookie, invalidateSession } from '$server/utils/auth';
 import { hash } from '@node-rs/argon2';
 import { error, redirect, fail } from '@sveltejs/kit';
 import type { Actions, ServerLoad } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 
 export const load: ServerLoad = async ({ locals }) => {
 	const userId = locals.user?.id || '';

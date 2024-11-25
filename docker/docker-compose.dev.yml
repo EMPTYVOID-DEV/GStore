@@ -4,27 +4,24 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - traefik_logs:/var/log
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
+      - traefik_logs:/var/log
+    labels:
+      - "traefik.enable=true"
+      # Dashboard without auth for local dev
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
     command:
       # API and dashboard
       - "--api.dashboard=true"
+      - "--api.insecure=true"
       # Docker provider
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      # Entrypoints
+      # Entrypoints - only HTTP for local dev
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      # Let's Encrypt
-      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      # Automatic HTTPS redirect
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       # Logs
       - "--log.level=DEBUG"
       - "--log.filePath=/var/log/traefik.log"
@@ -32,18 +29,10 @@ services:
       - "--accesslog.filepath=/var/log/access.log"
       - "--accesslog.format=json"
 
-    labels:
-      - "traefik.enable=true"
-      # Dashboard
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:?err}`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.entrypoints=websecure"
-      - "traefik.http.routers.dashboard.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USER:?err}:${TRAEFIK_PASSWORD:?err}"
-      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
-
   central_app:
-    build: ./apps/central
+    build:
+      context: ..
+      dockerfile: docker/central.dockerfile
     restart: unless-stopped
     networks:
       - web
@@ -51,8 +40,8 @@ services:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
-      - ORIGIN=https://central.${DOMAIN}
-      - NODE_ENV=prod
+      - ORIGIN=http://central.localhost
+      - NODE_ENV=dev
     expose:
       - ${CENTRAL_PORT:-3000}
     depends_on:
@@ -61,13 +50,14 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.central-service.loadbalancer.server.port=${CENTRAL_PORT:-3000}"
-      - "traefik.http.routers.central.rule=Host(`central.${DOMAIN}`)"
+      - "traefik.http.routers.central.rule=Host(`central.localhost`)"
       - "traefik.http.routers.central.service=central-service"
-      - "traefik.http.routers.central.entrypoints=websecure"
-      - "traefik.http.routers.central.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.central.entrypoints=web"
 
   api_server:
-    build: ./apps/api
+    build:
+      context: ..
+      dockerfile: docker/api.dockerfile
     restart: unless-stopped
     networks:
       - web
@@ -75,7 +65,7 @@ services:
       - api_storage:/app/storage
     environment:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - NODE_ENV=prod
+      - NODE_ENV=dev
       - PORT=${API_PORT:-3000}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10}
       - ROOT_DIR=${ROOT_DIR:-/app}
@@ -90,15 +80,27 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.internal-only.ipwhitelist.sourceRange=172.20.0.0/16"
       - "traefik.http.services.api-service.loadbalancer.server.port=${API_PORT:-3000}"
-      - "traefik.http.routers.api-internal.rule=Host(`api.${DOMAIN}`) && PathPrefix(`/stores`)"
+      - "traefik.http.routers.api-internal.rule=Host(`api.localhost`) && PathPrefix(`/stores`)"
       - "traefik.http.routers.api-internal.service=api-service"
       - "traefik.http.routers.api-internal.middlewares=internal-only@docker"
-      - "traefik.http.routers.api-internal.entrypoints=websecure"
-      - "traefik.http.routers.api-internal.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.api-public.rule=Host(`api.${DOMAIN}`) && !PathPrefix(`/stores`)"
+      - "traefik.http.routers.api-internal.entrypoints=web"
+      - "traefik.http.routers.api-public.rule=Host(`api.localhost`) && !PathPrefix(`/stores`)"
       - "traefik.http.routers.api-public.service=api-service"
-      - "traefik.http.routers.api-public.entrypoints=websecure"
-      - "traefik.http.routers.api-public.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.api-public.entrypoints=web"
+
+  migrator:
+    build:
+      context: ..
+      dockerfile: docker/migrator.dockerfile
+    networks:
+      - web
+    environment:
+      - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:?err}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?err}
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:16

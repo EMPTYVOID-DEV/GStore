@@ -24,6 +24,6 @@
       "@routes/*": ["./src/routes/*"]
     }
   },
-  "include": ["src/**/*", "drizzle.config.ts", "eslint.config.js"],
+  "include": ["src/**/*", "eslint.config.js"],
   "exclude": ["node_modules", "dist"]
 }

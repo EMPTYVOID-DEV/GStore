@@ -7,6 +7,7 @@
     "central-build": "pnpm --filter @gstore-org/central build",
     "cli-dev": "pnpm --filter @gstore-org/cli dev sync",
     "cli-build": "pnpm --filter @gstore-org/cli build",
+    "db-build": "pnpm --filter @gstore-org/db build",
     "build-public": "pnpm run cli-build",
     "version": "changeset version",
     "publish": "changeset publish",
@@ -17,7 +18,8 @@
     "pnpm": ">=9"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "dependencies": {
     "@changesets/cli": "^2.27.9"

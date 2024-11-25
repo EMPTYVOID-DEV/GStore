@@ -1,11 +1,9 @@
 import { z, type RouteHandler } from '@hono/zod-openapi';
 import type { createStoreRoute, deleteStoreRoute } from './store.dal';
-import { db } from '@database/db';
-import { storeTable } from '@database/schema';
+import { db, storeTable, eq } from 'db';
 import { HTTPException } from 'hono/http-exception';
 import { mkdir, rm } from 'fs/promises';
 import path from 'path';
-import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import { env } from '@shared/env';
 

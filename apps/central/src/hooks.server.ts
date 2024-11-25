@@ -1,5 +1,4 @@
-import { db } from '$server/database/db';
-import { storeTable } from '$server/database/schema';
+import { db, storeTable, and, eq } from 'db';
 import {
 	validateSessionToken,
 	setSessionTokenCookie,
@@ -8,7 +7,6 @@ import {
 import { checkPath } from '$server/utils/general';
 import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { and, eq } from 'drizzle-orm';
 
 export const handleError: HandleServerError = async ({ error }) => {
 	console.log(error);

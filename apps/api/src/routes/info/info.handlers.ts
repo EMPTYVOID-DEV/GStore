@@ -1,8 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi';
 import type { apiInfoRoute, keyInfoRoute } from './info.dal';
-import { db } from '@database/db';
-import { eq } from 'drizzle-orm';
-import { apiKeyTable } from '@database/schema';
+import { db, apiKeyTable, eq } from 'db';
 import { env } from '@shared/env';
 
 export const apiInfoHandler: RouteHandler<typeof apiInfoRoute> = async (c) => {

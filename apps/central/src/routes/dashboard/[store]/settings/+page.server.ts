@@ -1,8 +1,6 @@
 import { env } from '$env/dynamic/private';
-import { db } from '$server/database/db';
-import { storeTable } from '$server/database/schema';
+import { db, storeTable, eq } from 'db';
 import { error, type Actions, type ServerLoad } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 
 export const load: ServerLoad = async ({ params }) => {
 	const storeId = params.store || '';

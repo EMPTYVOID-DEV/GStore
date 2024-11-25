@@ -1,9 +1,7 @@
-import type { Permissions } from '$global/types.global';
 import { getValidator, keyNameSchema } from '$global/zod';
-import { db } from '$server/database/db';
-import { apiKeyTable } from '$server/database/schema';
+import type { Permissions } from 'db';
+import { db, apiKeyTable, and, eq } from 'db';
 import { error, fail, type Actions, type ServerLoad } from '@sveltejs/kit';
-import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const load: ServerLoad = async ({ params }) => {

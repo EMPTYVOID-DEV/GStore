@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Permissions } from '$global/types.global';
+	import type { Permissions } from 'db';
 	import { slide } from 'svelte/transition';
 	import DeleteIcon from '$client/icons/deleteIcon.svelte';
 	import DownIcon from '$client/icons/downIcon.svelte';

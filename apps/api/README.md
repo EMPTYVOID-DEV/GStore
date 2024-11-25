@@ -19,7 +19,6 @@ The GStore API is built using the following tools:
 ```
 📂 api
 └── 📂 src
-    ├── 📂 database
     ├── 📂 middlewares
     ├── 📂 routes
     │   ├── 📂 files
@@ -33,11 +32,10 @@ The GStore API is built using the following tools:
 ```
 
 1. `index.ts` is the API entry point.
-2. The **database** folder contains the Drizzle schema and a file to initialize the database instance.
-3. The **shared** folder includes global types, constants, and Zod schemas.
-4. The **utils** folder contains utility functions for Hono, Zod, the database, and general use.
-5. The **middlewares** folder includes the rate limiter, global Zod hooks, and the authorization middleware.
-6. Each set of routes has its own folder. Within each route folder, you'll find the following files:
+2. The **shared** folder includes global types, constants, and Zod schemas.
+3. The **utils** folder contains utility functions for Hono, Zod, the database, and general use.
+4. The **middlewares** folder includes the rate limiter, global Zod hooks, and the authorization middleware.
+5. Each set of routes has its own folder. Within each route folder, you'll find the following files:
    1. **`.dal.ts`**: Contains the route definitions.
    2. **`.schema.ts`**: Contains the schemas used by the routes.
    3. **`.handler.ts`**: Contains the route handlers.

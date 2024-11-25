@@ -1,4 +1,4 @@
-import type { Permissions } from '@shared/types.global';
+import type { Permissions } from './types.js';
 import { sql } from 'drizzle-orm';
 import { pgTable, text, timestamp, boolean, varchar, date, serial, unique, real } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
