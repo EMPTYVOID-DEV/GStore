@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.0
+
+### Minor Changes
+
+- 6f43ceb: Making minor adjustments after moving the database logic into it own package
+
 ## 1.1.0
 
 ### Minor Changes
