@@ -1,0 +1,42 @@
+{
+  "name": "@gstore-org/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db-studio": "pnpm drizzle-kit studio",
+    "migrate": "pnpm drizzle-kit generate",
+    "push-migrations": "pnpm drizzle-kit migrate",
+    "push-schema": "pnpm drizzle-kit push",
+    "migration-script": "node dist/utils/migrate.js",
+    "lint": "eslint .",
+    "build": "tsup"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "./dist/*",
+    "./drizzle/*"
+  ],
+  "dependencies": {
+    "@node-rs/argon2": "^1.1.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "0.36.0",
+    "drizzle-zod": "^0.5.1",
+    "nanoid": "^5.0.7",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/pg": "^8.11.8",
+    "drizzle-kit": "^0.27.0",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.2"
+  }
+}
