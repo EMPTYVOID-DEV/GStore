@@ -1,5 +1,11 @@
 # @gstore/api
 
+## 1.3.0
+
+### Minor Changes
+
+- da80cbb: Making minor adjustments after moving the database logic into it own package
+
 ## 1.2.1
 
 ### Patch Changes
