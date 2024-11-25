@@ -1,16 +1,26 @@
 import { db } from '$server/database/db';
-import { fileTable, storeTable } from '$server/database/schema';
+import { apiKeyTable, fileTable, storeTable } from '$server/database/schema';
 import { type Actions, redirect, fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { env } from '$env/dynamic/private';
 
-export const load = async ({ params }: { params: { store: string } }) => {
-	const currentStore = params.store;
+export const load = async ({ params }: { params: { apikey: string } }) => {
+	const currentApiKey = params.apikey;
+
+	const key_store = await db
+		.select()
+		.from(apiKeyTable)
+		.where(eq(apiKeyTable.key, currentApiKey))
+		.limit(1);
+
+	if (!key_store.length) {
+		return fail(404, { message: "API key doesn't exist!" });
+	}
 
 	const store = await db
 		.select()
 		.from(storeTable)
-		.where(eq(storeTable.id, currentStore))
+		.where(eq(storeTable.id, key_store[0].storeId))
 		.limit(1);
 
 	if (!store.length) {
@@ -22,77 +32,88 @@ export const load = async ({ params }: { params: { store: string } }) => {
 		.from(fileTable)
 		.where(eq(fileTable.storeId, store[0].id));
 
-	return { files, storeId: currentStore };
+	return { files };
 };
+
 
 export const actions: Actions = {
 	upload: async ({ request, fetch, params }) => {
 		const formData = await request.formData();
 		const file = formData.get('file') as File | null;
 		const isPublic = formData.get('isPublic') === 'true';
-		const tagsRaw = formData.get('tags') as string | null;
-		const tags = tagsRaw ? tagsRaw.split(',').map(tag => tag.trim()) : [];
-		const storeId = params.store;
-        const apiKey = formData.get('apiKey')
-
-		if (!file || !storeId) {
-			return fail(400, { message: 'File and Store ID are required.' });
+		const tags = formData.get('tags') as string;
+		const processedTags = tags.split(',').map(tag => tag.trim());
+		const currentApiKey = params.apikey;
+	
+		if (!file || !currentApiKey) {
+			return fail(400, { message: 'File and API key are required.' });
 		}
-
+	
+		const key_store = await db
+			.select()
+			.from(apiKeyTable)
+			.where(eq(apiKeyTable.key, currentApiKey))
+			.limit(1);
+	
+		if (!key_store.length) {
+			return fail(404, { message: "API key doesn't exist!" });
+		}
+	
+		const storeId = key_store[0].storeId;
+	
 		try {
 			const uploadFormData = new FormData();
 			uploadFormData.append('file', file);
 			uploadFormData.append('isPublic', isPublic.toString());
-			uploadFormData.append('tags', JSON.stringify(tags));
+			uploadFormData.append('tags', JSON.stringify(processedTags));
 			uploadFormData.append('storeId', storeId);
-
+	
 			const res = await fetch(`${env.API_HOST}/files/create`, {
 				method: 'POST',
-                headers: {
-					'Authorization': `Bearer ${apiKey}`,
+				headers: {
+					Authorization: `Bearer ${currentApiKey}`,
 				},
 				body: uploadFormData,
 			});
-
+	
 			if (!res.ok) {
 				const errorDetails = await res.json();
 				throw new Error(errorDetails.message || 'File upload failed.');
 			}
-
+	
 			const uploadedFile = await res.json();
 			return { success: true, file: uploadedFile };
 		} catch (err) {
 			console.error('Upload error:', err);
 			return fail(500, { message: 'Failed to upload file.' });
 		}
-	},
-
-	delete: async ({ request }) => {
+	},	
+	delete: async ({ params, request, fetch }) => {
 		const formData = await request.formData();
-		const fileId = formData.get('fileId')
-		const apiKey = formData.get('apiKey')
-
-		if (!fileId || !apiKey) {
+		const fileId = formData.get('fileId') as string;
+		const currentApiKey = params.apikey;
+	
+		if (!fileId || !currentApiKey) {
 			return fail(400, { message: 'File ID and API key are required.' });
 		}
-
+	
 		try {
 			const res = await fetch(`${env.API_HOST}/files/delete/${fileId}`, {
 				method: 'DELETE',
 				headers: {
-					'Authorization': `Bearer ${apiKey}`,
+					Authorization: `Bearer ${currentApiKey}`,
 				},
 			});
-
+	
 			if (!res.ok) {
 				const errorDetails = await res.json();
 				throw new Error(errorDetails.message || 'File delete failed.');
 			}
-
+	
 			return { success: true, fileId };
 		} catch (err) {
 			console.error('Delete error:', err);
 			return fail(500, { message: 'Failed to delete file.' });
 		}
-	},
+	}
 };
