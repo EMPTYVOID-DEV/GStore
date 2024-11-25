@@ -23,7 +23,7 @@
 </script>
 
 <div class="auth">
-	<div class="gradient-overlay" />
+	<div class="gradient-overlay"></div>
 	<a href="/" in:fly={{ y: -20, duration: 700 }}>
 		<h1>GStore</h1>
 	</a>

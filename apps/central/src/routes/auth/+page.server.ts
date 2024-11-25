@@ -1,11 +1,9 @@
-import { db } from '$server/database/db';
+import { db, userTable, eq } from 'db';
 import { createSessionWrapper } from '$server/utils/auth';
 import { getValidator, passwordSchema, usernameSchema } from '$global/zod';
 import { type Actions, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 import { verify } from '@node-rs/argon2';
 import { fail } from '@sveltejs/kit';
-import { userTable } from '$server/database/schema';
 
 export const actions: Actions = {
 	login: async ({ cookies, request }) => {

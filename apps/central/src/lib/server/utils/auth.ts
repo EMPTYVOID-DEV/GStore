@@ -1,11 +1,9 @@
-import { db } from '$server/database/db';
-import { eq } from 'drizzle-orm';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-import { sessionTable, userTable } from '$server/database/schema';
+import { db, sessionTable, userTable, eq } from 'db';
+import type { Session } from 'db';
 import type { SessionValidationResult } from '$server/types.server';
 import type { Cookies } from '@sveltejs/kit';
-import type { Session } from '$global/types.global';
 import { env } from '$env/dynamic/private';
 
 export function generateSessionToken(): string {

@@ -10,17 +10,13 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint .",
-		"db-studio": "drizzle-kit studio"
+		"lint": "prettier --check . && eslint ."
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^5.2.9",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@types/eslint": "^9.6.0",
-		"@types/nodemailer": "^6.4.16",
-		"@types/pg": "^8.11.8",
-		"drizzle-kit": "^0.28.0",
 		"eslint": "^9.7.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
@@ -37,11 +33,7 @@
 		"@node-rs/argon2": "^1.1.0",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
-		"bits-ui": "^0.21.16",
-		"drizzle-orm": "^0.36.1",
-		"nanoid": "^5.0.7",
-		"nodemailer": "^6.9.16",
-		"pg": "^8.12.0",
+		"db": "file:../../packages/db",
 		"svelte-sonner": "^0.3.28",
 		"zod": "^3.23.8"
 	}
