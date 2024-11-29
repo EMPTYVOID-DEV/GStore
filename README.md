@@ -113,6 +113,24 @@ How to run GStore may vary based on your setup. The following are our recommenda
 2. Copy `.env.example` to `.env` and configure
 3. `docker-compose -f docker/docker-compose.dev.yml --env-file=.env up`
 
+#### Testing Development on a VPS
+
+If you plan to test the development environment on a VPS, you need to configure your local machine's /etc/hosts file. This is necessary to ensure the domain names used in the project resolve to the VPS IP address.
+
+  1. Open your /etc/hosts file using a text editor with administrative privileges:
+  `sudo nano /etc/hosts`
+  2. Add entries for your domain names pointing to the VPS IP:
+  ```
+  <VPS_IP> central.domain
+  <VPS_IP> api.domain
+  <VPS_IP> traefik.domain
+  ```
+  Replace <VPS_IP> with the actual IP address of your VPS.
+  3. Save the file and exit.
+
+This setup allows your local machine to resolve *central.domain*, *api.domain*, and *traefik.domain* to the VPS IP for testing purposes. Ensure that the domains used in your .env file match these entries.
+
+
 ### Production Environment
 
 1. Configure domain name
