@@ -33,13 +33,14 @@ services:
       - "--accesslog.format=json"
 
     labels:
-      - "traefik.enable=true"
       # Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USER:?err}:${TRAEFIK_PASSWORD:?err}"
       - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:?err}`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.service=traefik-dashboard"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USER:?err}:${TRAEFIK_PASSWORD:?err}"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
 
   central_app:

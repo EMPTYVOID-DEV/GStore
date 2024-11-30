@@ -6,12 +6,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_logs:/var/log
-    labels:
-      - "traefik.enable=true"
-      # Dashboard without auth for local dev
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.entrypoints=web"
     command:
       # API and dashboard
       - "--api.dashboard=true"
@@ -28,6 +22,13 @@ services:
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
       - "--accesslog.format=json"
+    labels:
+      - "traefik.enable=true"
+      # Dashboard without auth for local dev
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:?err}`)"
+      - "traefik.http.routers.dashboard.service=traefik-dashboard"
+      - "traefik.http.routers.dashboard.entrypoints=web"
 
   central_app:
     build:
@@ -40,7 +41,7 @@ services:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
-      - ORIGIN=http://central.localhost
+      - ORIGIN=http://central.${DOMAIN:?err}
       - NODE_ENV=dev
     expose:
       - ${CENTRAL_PORT:-3000}
@@ -50,7 +51,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.central-service.loadbalancer.server.port=${CENTRAL_PORT:-3000}"
-      - "traefik.http.routers.central.rule=Host(`central.localhost`)"
+      - "traefik.http.routers.central.rule=Host(`central.${DOMAIN:?err}`)"
       - "traefik.http.routers.central.service=central-service"
       - "traefik.http.routers.central.entrypoints=web"
 
@@ -80,11 +81,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.internal-only.ipwhitelist.sourceRange=172.20.0.0/16"
       - "traefik.http.services.api-service.loadbalancer.server.port=${API_PORT:-3000}"
-      - "traefik.http.routers.api-internal.rule=Host(`api.localhost`) && PathPrefix(`/stores`)"
+      - "traefik.http.routers.api-internal.rule=Host(`api.${DOMAIN:?err}`) && PathPrefix(`/stores`)"
       - "traefik.http.routers.api-internal.service=api-service"
       - "traefik.http.routers.api-internal.middlewares=internal-only@docker"
       - "traefik.http.routers.api-internal.entrypoints=web"
-      - "traefik.http.routers.api-public.rule=Host(`api.localhost`) && !PathPrefix(`/stores`)"
+      - "traefik.http.routers.api-public.rule=Host(`api.${DOMAIN:?err}`) && !PathPrefix(`/stores`)"
       - "traefik.http.routers.api-public.service=api-service"
       - "traefik.http.routers.api-public.entrypoints=web"
 

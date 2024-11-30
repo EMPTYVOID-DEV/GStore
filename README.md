@@ -59,53 +59,88 @@ gstore/
 
 ## Usage
 
-Follow these steps to set up and run GStore:
+### Prerequisites
 
-1. **Install prerequisites**: Ensure [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed. The setup might vary depending on your environment.
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-2. **Clone the GStore repository**:
+### Setup Steps
+
+1. **Clone the Repository**
 
    ```bash
    git clone https://github.com/EMPTYVOID-DEV/GStore
    ```
 
-3. **Create a `.env` file** based on the provided `.env.example` template.
+2. **Configure Environment**
 
-4. **Run Docker Compose**:
+   - Copy `.env.example` to `.env`
+   - Fill in required environment variables
+
+3. **Run the Application**
+
+   **Development:**
 
    ```bash
    docker-compose -f docker/docker-compose.dev.yml --env-file=.env up
    ```
 
-   Use the appropriate Compose file for production or development environments.
+   **Production:**
 
-5. **Access the Central Application**: Log in using the admin credentials.
+   ```bash
+   docker-compose -f docker/docker-compose.prod.yml --env-file=.env up -d
+   ```
 
-6. **Set up a store**: Create a new store and generate an API key for it.
+### Access Points
 
-7. **Interact with the API**: Access the API via external tools like the CLI, desktop application, Postman, or other backend systems using the API key.
+- Central Application: `central.domain`
+- API Server: `api.domain`
+- Traefik Dashboard: `traefik.domain`
 
-### Notes
+### First-Time Use
 
-- Usernames are case-insensitive and stored in lowercase.
-- The admin account is created during database migration. Specify the admin username and password in the `.env` file.
-- Admins can create additional user accounts.
+1. Log in with admin credentials
+2. Create a store
+3. Generate an API key
+4. Start using the API
 
-#### For Production Deployments:
+### For Production Deployments
 
 1. **Public Domain Setup**:
-   - Ensure your VPS is configured with a public domain. This is necessary for Traefik to automatically generate SSL certificates.
+
+   - Ensure your VPS is configured with a public domain for automatic Let's Encrypt SSL certificates otherwise traefik will use default certificate.
+
 2. **Port Configuration**:
-   - Make sure ports 80 and 443 are exposed on your VPS. Check your firewall rules to confirm.
+
+   - Open ports 80 (HTTP) and 443 (HTTPS) on your VPS
+   - Check firewall rules to confirm port exposure
+
 3. **DNS Records**:
-   - Update your DNS records to point the required subdomains (`api.domain`, `central.domain`, `traefik.domain`) to your VPS IP address.
+   - Update DNS provider to create A or CNAME records:
+     - `api.domain` → VPS public IP
+     - `central.domain` → VPS public IP
+     - `traefik.domain` → VPS public IP
 
-#### For Development Environments:
+### Development Environments
 
-1. **Running on a VPS**:
-   - Modify your local `/etc/hosts` file to map your VPS IP address to the required subdomains (`api.domain`, `central.domain`, `traefik.domain`).
-2. **Running Locally**:
-   - DNS configuration is not needed. The services will be accessible locally without further setup.
+**1. Running on a VPS**:
+
+- Ensure ports 80 and 443 are exposed
+- Modify local `/etc/hosts` to map subdomains to VPS IP:
+  ```
+  <VPS_IP_ADDRESS> api.domain
+  <VPS_IP_ADDRESS> central.domain
+  <VPS_IP_ADDRESS> traefik.domain
+  ```
+
+**2. Local Development**:
+
+- Modify `/etc/hosts` to map subdomains to loopback:
+  ```
+  127.0.0.1 api.domain
+  127.0.0.1 central.domain
+  127.0.0.1 traefik.domain
+  ```
 
 ## Future Enhancements (V2)
 
