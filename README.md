@@ -1,6 +1,6 @@
 # GStore
 
-GStore is a self-hosted storage solution for institutions, companies, and developers. It provides a centralized management interface and API for file storage, featuring advanced capabilities like file transformations and granular access control.
+GStore is a self-hosted storage solution designed for organizations and developers. It offers a centralized management interface and an API for seamless file storage, coupled with advanced features like file transformations and granular access control.
 
 ## Features
 
@@ -8,82 +8,36 @@ GStore is a self-hosted storage solution for institutions, companies, and develo
   - User authentication
   - User management through an admin account
   - Virtual store management (creation and deletion)
-  - API key management with customizable permissions and expiration
-  - File browsing across stores
+  - API key management with customizable permissions and expiration settings
 - **Storage API**
-  - Complete file operations (create, read, update, delete, list)
-  - Built-in file transformations
+  - Comprehensive file operations (create, read, update, delete, list)
+  - Integrated file transformation capabilities:
     - Image processing
     - PDF manipulation
     - Video encoding
-  - Public and private file support
-  - API key authentication
-  - Comprehensive API documentation with Swagger UI
-  - Request validation using Zod (parameters, query, body)
-  - Rate limiting and file size controls
+  - Support for both public and private files
+  - API key-based authentication
+  - Extensive API documentation with Scalar UI
+  - Request validation leveraging Zod (parameters, queries, bodies)
+  - Rate limiting and file size restrictions
 - **Additional Applications**
-  - Command-line interface for automation and CI/CD integration
-  - Desktop application for visual file management (in development)
+  - Command-line interface (CLI) for automation and CI/CD workflows
+  - Desktop application for visual file management (currently under development)
 
 ## Architecture
 
 ![Architecture v1](./assets/architectureV1.png)
 
 - **Central Application**: SvelteKit-based management interface (`central.domain`)
-- **API**: Hono Bun server for file operations (`api.domain`)
-- **Database**: PostgreSQL for metadata storage
-- **Proxy**: Traefik for routing and API gateway functionality
-- **Storage**: File system-based storage solution
-
-## Implementation Details
-
-### Workflow
-
-1. Access the central application
-2. Create a storage instance
-3. Generate an API key
-4. Interact with API endpoints using the generated key!
-
-![Storage Flow](./assets/storage_flow.png)
-
-#### Important Notes
-
-1. Usernames are unique and stored in lowercase
-2. Admin account creation occurs during database migration. You just need to specify admin username and password in .env.
-3. Admins can create additional user accounts
-
-### Storage System
-
-GStore maintains file metadata in a database while storing actual content in the file system. File metadata :
-
-- Name
-- Extension
-- Size
-- Creation timestamp
-- Visibility status
-- Tags
-- Store identifier
-- Index
-
-Files can be tagged for organization (e.g., ["images", "png"]) and downloaded collectively by tag groups. The system supports both public (statically accessible) and private files.
-
-Each file will have a unique identifier called **index** which is the name of file in the file system.
-
-### Transformations
-
-File transformations operate on existing store content. Most transformations follow this request format:`json
-{
-  "id": "EILvhPP_",  "outputMethod": { "type": "return" }
-}`
-
-- `id`: Target file identifier
-- `outputMethod`: Result handling specification (return, create new file, or update existing file)
-
-Some transformations may require additional parameters or use different request formats.
+- **API**: Hono Bun server handling file operations (`api.domain`)
+- **Database**: PostgreSQL used for metadata storage
+- **Proxy**: Traefik acting as the routing and API gateway (`traefik.domain`)
+- **Storage**: File system-based solution for efficient storage
+- **External Components**: The desktop application, CLI, and other integrations only access the system via the proxy.
 
 ## Project Structure
 
-The project uses a monorepo organization:
+The project follows a monorepo architecture:
 
 ```
 gstore/
@@ -98,58 +52,69 @@ gstore/
 └── .env.example
 ```
 
-1. Applications directory containing all components
-2. Shared packages for common functionality
-3. Docker files
-4. Under each workspace you will have a readme and optionally a .env.example.
+1. The `apps/` directory contains the various applications.
+2. The `packages/` directory houses shared functionality and utilities.
+3. Docker configuration files are included in the `docker/` folder.
+4. Each workspace has a dedicated `README` file with specific details and an optional `.env.example` template.
 
 ## Usage
 
-How to run GStore may vary based on your setup. The following are our recommendations for running GStore in development and production.
+Follow these steps to set up and run GStore:
 
-### Development Environment
+1. **Install prerequisites**: Ensure [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) are installed. The setup might vary depending on your environment.
 
-1. `git clone git@github.com:EMPTYVOID-DEV/g-store.git`
-2. Copy `.env.example` to `.env` and configure
-3. `docker-compose -f docker/docker-compose.dev.yml --env-file=.env up`
+2. **Clone the GStore repository**:
 
-#### Testing Development on a VPS
+   ```bash
+   git clone https://github.com/EMPTYVOID-DEV/GStore
+   ```
 
-If you plan to test the development environment on a VPS, you need to configure your local machine's /etc/hosts file. This is necessary to ensure the domain names used in the project resolve to the VPS IP address.
+3. **Create a `.env` file** based on the provided `.env.example` template.
 
-  1. Open your /etc/hosts file using a text editor with administrative privileges:
-  `sudo nano /etc/hosts`
-  2. Add entries for your domain names pointing to the VPS IP:
-  ```
-  <VPS_IP> central.domain
-  <VPS_IP> api.domain
-  <VPS_IP> traefik.domain
-  ```
-  Replace <VPS_IP> with the actual IP address of your VPS.
-  3. Save the file and exit.
+4. **Run Docker Compose**:
 
-This setup allows your local machine to resolve *central.domain*, *api.domain*, and *traefik.domain* to the VPS IP for testing purposes. Ensure that the domains used in your .env file match these entries.
+   ```bash
+   docker-compose -f docker/docker-compose.dev.yml --env-file=.env up
+   ```
 
+   Use the appropriate Compose file for production or development environments.
 
-### Production Environment
+5. **Access the Central Application**: Log in using the admin credentials.
 
-1. Configure domain name
-2. Set up DNS records for `api.domain`, `central.domain`, and `traefik.domain`
-3. Configure `.env` file
-4. `docker-compose -f docker/docker-compose.prod.yml --env-file=.env up`
+6. **Set up a store**: Create a new store and generate an API key for it.
 
-## Additional Applications
+7. **Interact with the API**: Access the API via external tools like the CLI, desktop application, Postman, or other backend systems using the API key.
 
-- **Command Line Interface**: Available for automation tasks, cron jobs, and CI/CD workflows
-- **Desktop Application**: Currently under development, provides visual interface for API interaction
+### Notes
+
+- Usernames are case-insensitive and stored in lowercase.
+- The admin account is created during database migration. Specify the admin username and password in the `.env` file.
+- Admins can create additional user accounts.
+
+#### For Production Deployments:
+
+1. **Public Domain Setup**:
+   - Ensure your VPS is configured with a public domain. This is necessary for Traefik to automatically generate SSL certificates.
+2. **Port Configuration**:
+   - Make sure ports 80 and 443 are exposed on your VPS. Check your firewall rules to confirm.
+3. **DNS Records**:
+   - Update your DNS records to point the required subdomains (`api.domain`, `central.domain`, `traefik.domain`) to your VPS IP address.
+
+#### For Development Environments:
+
+1. **Running on a VPS**:
+   - Modify your local `/etc/hosts` file to map your VPS IP address to the required subdomains (`api.domain`, `central.domain`, `traefik.domain`).
+2. **Running Locally**:
+   - DNS configuration is not needed. The services will be accessible locally without further setup.
 
 ## Future Enhancements (V2)
 
-- **Advanced Monitoring**: ELK stack integration
-- **Scaling Capabilities**:
-  - KEDA-based request scaling
-  - NFS storage for distributed systems
+- **Advanced Monitoring**: Integration with the ELK stack for comprehensive monitoring and logging.
+- **Scalability**:
+  - Request scaling with KEDA.
+  - Support for distributed systems using NFS-based storage.
+- **Adapters**: Enable GStore to act as a proxy for various external storage providers.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://opensource.org/license/mit) for details.
+This project is licensed under the MIT License. For more details, refer to the [LICENSE](https://opensource.org/license/mit).

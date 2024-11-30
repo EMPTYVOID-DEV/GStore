@@ -57,6 +57,35 @@ Currently, the API uses a basic logging method that writes server errors and req
 
 The environment variables are validated using a zod schema.
 
+## Storage System
+
+GStore maintains file metadata in a database while storing actual content in the file system. File metadata :
+
+- Name
+- Extension
+- Size
+- Creation timestamp
+- Visibility status
+- Tags
+- Store identifier
+- Index
+
+Files can be tagged for organization (e.g., ["images", "png"]) and downloaded collectively by tag groups. The system supports both public (statically accessible) and private files.
+
+Each file will have a unique identifier called **index** which is the name of file in the file system.
+
+## Transformations
+
+File transformations operate on existing store content. Most transformations follow this request format:`json
+{
+  "id": "EILvhPP_",  "outputMethod": { "type": "return" }
+}`
+
+- `id`: Target file identifier
+- `outputMethod`: Result handling specification (return, create new file, or update existing file)
+
+Some transformations may require additional parameters or use different request formats.
+
 ## Standards
 
 We tried to design the GStore API to follow web standards as much as possible since that what bun and hono follows, but there are some libraries built for Node.js that require us to use Node-based APIs at times. You will find a lot of helpers to transform from one standard to another.
