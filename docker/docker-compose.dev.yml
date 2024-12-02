@@ -8,7 +8,6 @@ services:
       - traefik_logs:/var/log
     command:
       # API and dashboard
-      - "--api.dashboard=true"
       - "--api.insecure=true"
       # Docker provider
       - "--providers.docker=true"
@@ -22,13 +21,6 @@ services:
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
       - "--accesslog.format=json"
-    labels:
-      - "traefik.enable=true"
-      # Dashboard without auth for local dev
-      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:?err}`)"
-      - "traefik.http.routers.dashboard.service=traefik-dashboard"
-      - "traefik.http.routers.dashboard.entrypoints=web"
 
   central_app:
     build:
@@ -41,7 +33,7 @@ services:
       - DB_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - PORT=${CENTRAL_PORT:-3000}
       - API_HOST=http://api_server:${API_PORT:-3000}
-      - ORIGIN=http://central.${DOMAIN:?err}
+      - ORIGIN=http://central.${DOMAIN}
       - NODE_ENV=dev
     expose:
       - ${CENTRAL_PORT:-3000}

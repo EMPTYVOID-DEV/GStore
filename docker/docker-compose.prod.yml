@@ -8,8 +8,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./letsencrypt:/letsencrypt
     command:
-      # API and dashboard
-      - "--api.dashboard=true"
       # Docker provider
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -31,17 +29,6 @@ services:
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
       - "--accesslog.format=json"
-
-    labels:
-      # Dashboard
-      - "traefik.enable=true"
-      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
-      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_USER:?err}:${TRAEFIK_PASSWORD:?err}"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:?err}`)"
-      - "traefik.http.routers.dashboard.service=traefik-dashboard"
-      - "traefik.http.routers.dashboard.entrypoints=websecure"
-      - "traefik.http.routers.dashboard.middlewares=auth"
-      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
 
   central_app:
     build:

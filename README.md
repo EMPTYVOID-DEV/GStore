@@ -119,7 +119,6 @@ gstore/
    - Update DNS provider to create A or CNAME records:
      - `api.domain` → VPS public IP
      - `central.domain` → VPS public IP
-     - `traefik.domain` → VPS public IP
 
 ### Development Environments
 
@@ -130,7 +129,6 @@ gstore/
   ```
   <VPS_IP_ADDRESS> api.domain
   <VPS_IP_ADDRESS> central.domain
-  <VPS_IP_ADDRESS> traefik.domain
   ```
 
 **2. Local Development**:
@@ -139,7 +137,6 @@ gstore/
   ```
   127.0.0.1 api.domain
   127.0.0.1 central.domain
-  127.0.0.1 traefik.domain
   ```
 
 ## Future Enhancements (V2)
