@@ -31,7 +31,7 @@ GStore is a self-hosted storage solution designed for organizations and develope
 - **Central Application**: SvelteKit-based management interface (`central.domain`)
 - **API**: Hono Bun server handling file operations (`api.domain`)
 - **Database**: PostgreSQL used for metadata storage
-- **Proxy**: Traefik acting as the routing and API gateway (`traefik.domain`)
+- **Proxy**: Traefik acting as the routing and API gateway
 - **Storage**: File system-based solution for efficient storage
 - **External Components**: The desktop application, CLI, and other integrations only access the system via the proxy.
 
@@ -95,7 +95,6 @@ gstore/
 
 - Central Application: `central.domain`
 - API Server: `api.domain`
-- Traefik Dashboard: `traefik.domain`
 
 ### First-Time Use
 
