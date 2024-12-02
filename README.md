@@ -1,12 +1,12 @@
 # GStore
 
-GStore is a self-hosted storage solution designed for organizations and developers. It offers a centralized management interface and an API for seamless file storage, coupled with advanced features like file transformations and granular access control.
+GStore is a self-hosted storage solution designed for organizations and developers. It offers a centralized management interface and an API for seamless file storage, along with advanced features such as file transformations and granular access control.
 
 ## Features
 
 - **Central Application**
   - User authentication
-  - User management through an admin account
+  - User management via an admin account
   - Virtual store management (creation and deletion)
   - API key management with customizable permissions and expiration settings
 - **Storage API**
@@ -18,7 +18,7 @@ GStore is a self-hosted storage solution designed for organizations and develope
   - Support for both public and private files
   - API key-based authentication
   - Extensive API documentation with Scalar UI
-  - Request validation leveraging Zod (parameters, queries, bodies)
+  - Request validation using Zod (parameters, queries, bodies)
   - Rate limiting and file size restrictions
 - **Additional Applications**
   - Command-line interface (CLI) for automation and CI/CD workflows
@@ -28,12 +28,12 @@ GStore is a self-hosted storage solution designed for organizations and develope
 
 ![Architecture v1](./assets/architectureV1.png)
 
-- **Central Application**: SvelteKit-based management interface (`central.domain`)
-- **API**: Hono Bun server handling file operations (`api.domain`)
+- **Central Application**: A SvelteKit-based management interface (`central.domain`)
+- **API**: A Hono Bun server handling file operations (`api.domain`)
 - **Database**: PostgreSQL used for metadata storage
 - **Proxy**: Traefik acting as the routing and API gateway
-- **Storage**: File system-based solution for efficient storage
-- **External Components**: The desktop application, CLI, and other integrations only access the system via the proxy.
+- **Storage**: A file system-based solution for efficient storage
+- **External Components**: The desktop application, CLI, and other integrations access the system exclusively via the proxy.
 
 ## Project Structure
 
@@ -53,9 +53,9 @@ gstore/
 ```
 
 1. The `apps/` directory contains the various applications.
-2. The `packages/` directory houses shared functionality and utilities.
-3. Docker configuration files are included in the `docker/` folder.
-4. Each workspace has a dedicated `README` file with specific details and an optional `.env.example` template.
+2. The `packages/` directory houses shared functionalities and utilities.
+3. Docker configuration files are stored in the `docker/` folder.
+4. Each workspace includes a dedicated `README` file with specific details and an optional `.env.example` template.
 
 ## Usage
 
@@ -72,24 +72,43 @@ gstore/
    git clone https://github.com/EMPTYVOID-DEV/GStore
    ```
 
-2. **Configure Environment**
+2. **Configure the Environment**
 
    - Copy `.env.example` to `.env`
-   - Fill in required environment variables
+   - Fill in the required environment variables
 
 3. **Run the Application**
 
-   **Development:**
-
    ```bash
-   docker-compose -f docker/docker-compose.dev.yml --env-file=.env up
+   docker-compose -f docker/docker-compose.yml --env-file=.env up -d
    ```
 
-   **Production:**
+### For Deployment
 
-   ```bash
-   docker-compose -f docker/docker-compose.prod.yml --env-file=.env up -d
-   ```
+- Ensure your server is configured with a public domain.
+- Ensure ports 80 and 443 are exposed.
+- Update your DNS provider to create A or CNAME records:
+  - `api.domain` → server public IP
+  - `central.domain` → server public IP
+
+### For Testing
+
+1. **Testing on a remote server**:
+
+   - Ensure ports 80 and 443 are exposed.
+   - Modify the local `/etc/hosts` file to map subdomains to the server IP:
+     ```
+     <SERVER_IP_ADDRESS> api.domain
+     <SERVER_IP_ADDRESS> central.domain
+     ```
+
+2. **Testing locally**:
+
+   - Modify the `/etc/hosts` file to map subdomains to the loopback address:
+     ```
+     127.0.0.1 api.domain
+     127.0.0.1 central.domain
+     ```
 
 ### Access Points
 
@@ -98,52 +117,17 @@ gstore/
 
 ### First-Time Use
 
-1. Log in with admin credentials
-2. Create a store
-3. Generate an API key
-4. Start using the API
-
-### For Production Deployments
-
-1. **Public Domain Setup**:
-
-   - Ensure your VPS is configured with a public domain for automatic Let's Encrypt SSL certificates otherwise traefik will use default certificate.
-
-2. **Port Configuration**:
-
-   - Open ports 80 (HTTP) and 443 (HTTPS) on your VPS
-   - Check firewall rules to confirm port exposure
-
-3. **DNS Records**:
-   - Update DNS provider to create A or CNAME records:
-     - `api.domain` → VPS public IP
-     - `central.domain` → VPS public IP
-
-### Development Environments
-
-**1. Running on a VPS**:
-
-- Ensure ports 80 and 443 are exposed
-- Modify local `/etc/hosts` to map subdomains to VPS IP:
-  ```
-  <VPS_IP_ADDRESS> api.domain
-  <VPS_IP_ADDRESS> central.domain
-  ```
-
-**2. Local Development**:
-
-- Modify `/etc/hosts` to map subdomains to loopback:
-  ```
-  127.0.0.1 api.domain
-  127.0.0.1 central.domain
-  ```
+1. Log in with admin credentials.
+2. Create a store.
+3. Generate an API key.
+4. Start using the API.
 
 ## Future Enhancements (V2)
 
 - **Advanced Monitoring**: Integration with the ELK stack for comprehensive monitoring and logging.
 - **Scalability**:
-  - Request scaling with KEDA.
-  - Support for distributed systems using NFS-based storage.
+  - Request scaling using KEDA
+  - Support for distributed systems using NFS-based storage
 - **Adapters**: Enable GStore to act as a proxy for various external storage providers.
 
 ## License
