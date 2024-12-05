@@ -22,6 +22,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "@changesets/cli": "^2.27.9"
+    "@changesets/cli": "^2.27.10"
   }
 }
