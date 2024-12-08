@@ -149,3 +149,7 @@ export const updateSchema = z.object({
       description: 'New tags',
     }),
 });
+
+export const searchReturnSchema = z.object({
+  exists: z.boolean(),
+});
