@@ -7,6 +7,7 @@ import {
   readFileRoute,
   readStaticRoute,
   updateFileRoute,
+  searchFileRoute,
 } from './files.dal';
 import type { RouteHandler } from '@hono/zod-openapi';
 import { stream as honoStream } from 'hono/streaming';
@@ -114,8 +115,8 @@ export const deleteFileHandler: RouteHandler<typeof deleteFileRoute, Authorizati
 
 export const updateFileHandler: RouteHandler<typeof updateFileRoute, AuthorizationBinding> = async (c) => {
   const { id } = c.req.valid('param');
-  const { file, tags, name } = c.req.valid('form');
   const storeId = c.get('storeId');
+  const { file, tags, name } = c.req.valid('form');
 
   if (!file && !tags && !name)
     return createCustomError(c, "At least one of 'file' or 'tags' or name must be provided", 'tags or file or name', 'invalid_arguments');
@@ -151,4 +152,12 @@ export const updateFileHandler: RouteHandler<typeof updateFileRoute, Authorizati
     .set(values)
     .where(and(eq(fileTable.storeId, storeId), eq(fileTable.id, id)));
   return c.json({ ...values });
+};
+
+export const searchFileHandler: RouteHandler<typeof searchFileRoute, AuthorizationBinding> = async (c) => {
+  const { id } = c.req.valid('param');
+  const storeId = c.get('storeId');
+  const wantedFile = await getFileEntry(storeId, id);
+  if (wantedFile._tag == 'None') return c.json({ exists: false });
+  return c.json({ exists: true });
 };

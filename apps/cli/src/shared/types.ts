@@ -11,7 +11,7 @@ export type ConfigJson = z.infer<typeof configSchema>;
 
 export type TracksJson = z.infer<typeof tracksSchema>;
 
-export type Permissions = 'create' | 'read' | 'delete' | 'update' | 'list-files' | 'apply-transformation';
+export type Permissions = 'create' | 'read' | 'delete' | 'update' | 'access-metadata' | 'apply-transformation';
 
 export type ApiKey = {
   name: string;

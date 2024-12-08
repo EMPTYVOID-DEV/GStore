@@ -1,20 +1,29 @@
-import axios from 'axios';
-import ora from 'ora';
+import axios, { type AxiosInstance } from 'axios';
 import { readdir } from 'fs/promises';
 import Path from 'path';
 import fsExtra from 'fs-extra';
-import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '../shared/types.js';
-import { pathToFile, byteToMega, errorExit, getFileInfo, loadJson, logger, validateSchema } from '../shared/utils.js';
-import { tracksSchema } from '../shared/zodSchemas.js';
+import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '@shared/types.js';
+import { pathToFile, byteToMega, errorExit, getFileInfo, loadJson, logger, validateSchema } from '@shared/utils.js';
+import { tracksSchema } from '@shared/zodSchemas.js';
+import ora from 'ora';
 
 export class ActionsExecuter {
   private config: ConfigJson;
   private tracks: TracksJson['tracks'] = [];
-  private apiInfo: ApiInfo = { MAX_FILE_SIZE: -1, RATE_LIMITS: -1, RATE_WINDOW: -1 };
+  private apiInfo: ApiInfo = {
+    MAX_FILE_SIZE: -1,
+    RATE_LIMITS: -1,
+    RATE_WINDOW: -1,
+  };
   private tracking = false;
+  private axios: AxiosInstance;
 
   constructor(config: ConfigJson) {
     this.config = config;
+    this.axios = axios.create({
+      baseURL: config.host,
+      headers: { Authorization: `bearer ${config.key}` },
+    });
   }
 
   async loadTrackingFile() {
@@ -27,34 +36,33 @@ export class ActionsExecuter {
 
   async flashTracks() {
     if (!this.tracking) return;
-    const content = JSON.stringify({ tracks: this.tracks });
-    await fsExtra.writeFile(this.config.trackingFile!, content);
+    await fsExtra.writeFile(this.config.trackingFile!, JSON.stringify({ tracks: this.tracks }));
   }
 
-  async verifyKey(): Promise<void> {
+  async verifyKey() {
     try {
-      const { data } = await axios.get<ApiKey>(`${this.config.host}/info/key-info/${this.config.key}`);
-      if (new Date() >= new Date(data.expiresAt)) errorExit('Key expired');
+      const { data } = await this.axios.get<ApiKey>(`/info/key-info/${this.config.key}`);
+      if (new Date() >= new Date(data.expiresAt)) {
+        errorExit('Key expired');
+      }
       logger().info(`Key name: ${data.name}, Store: ${data.storeId}, Permissions: ${data.permissions.join(', ')}`);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) errorExit('Key not found');
-      errorExit('Failed to verify the key');
+      this.handleError(error, 'Verifying api key');
     }
   }
 
-  async fetchApiInfo(): Promise<void> {
+  async fetchApiInfo() {
     try {
-      const { data } = await axios.get<ApiInfo>(`${this.config.host}/info/api-info`);
+      const { data } = await this.axios.get<ApiInfo>('/info/api-info');
       logger().info(`Rate Limits: ${data.RATE_LIMITS}, Window: ${data.RATE_WINDOW}ms, Max File Size: ${data.MAX_FILE_SIZE}MB`);
       this.apiInfo = data;
-    } catch {
-      errorExit('Failed to fetch API information');
+    } catch (error) {
+      this.handleError(error, 'Fetching api info');
     }
   }
 
-  async execute(): Promise<void> {
+  async execute() {
     const { actions } = this.config;
-
     for (const actionName in actions) {
       const spinner = ora(`Executing ${actionName}`).start();
       try {
@@ -72,6 +80,9 @@ export class ActionsExecuter {
           case 'update':
             await this.updateFile(actionContext.data);
             break;
+          case 'backup':
+            await this.backup(actionContext.data);
+            break;
         }
         spinner.succeed(`${actionName} executed successfully`);
       } catch (error) {
@@ -81,38 +92,91 @@ export class ActionsExecuter {
     }
   }
 
-  private existsInTracks(path: string): boolean {
-    return this.tracking && this.tracks.some((track) => track.path === path);
+  private async refreshTrackedFiles() {
+    const updatedTracks = [];
+    for (const track of this.tracks) {
+      const { data } = await this.axios.get<{ exists: boolean }>(`/files/search/${track.id}`);
+      if (data.exists) {
+        updatedTracks.push(track);
+      }
+    }
+    this.tracks = updatedTracks;
   }
 
-  private async createDir(data: { path: string; isPublic: boolean; tags: string[]; ignore: string[] }) {
-    const { path, isPublic, tags, ignore } = data;
+  private diffTracks(local: string[]) {
+    return {
+      newTracks: local.filter((path) => !this.tracks.find((el) => el.path === path)),
+      deletedTracks: this.tracks.filter((track) => !local.includes(track.path)),
+    };
+  }
 
-    const exists = await fsExtra.exists(path);
-    if (!exists) throw new Error(`Directory does not exist: ${path}`);
+  private async backup(data: { path: string; isPublic: boolean; tags: string[]; skipChecking: boolean }) {
+    if (!this.tracking) {
+      throw new Error('Tracking file is not specified, skipping the action...');
+    }
+
+    const { path, isPublic, tags, skipChecking } = data;
+    if (!(await fsExtra.exists(path))) {
+      throw new Error(`Directory does not exist: ${path}`);
+    }
+
+    if (!skipChecking) {
+      await this.refreshTrackedFiles();
+    }
+
+    const localEntries = (await readdir(path, { withFileTypes: true })).filter((el) => el.isFile()).map((el) => Path.join(path, el.name));
+
+    const { deletedTracks, newTracks } = this.diffTracks(localEntries);
+
+    await this.backupDeletes(deletedTracks);
+    await this.backupInserts(newTracks, isPublic, tags);
+  }
+
+  private async backupDeletes(deletedTracks: TracksJson['tracks']) {
+    logger().info('\n Syncing deletes');
+    for (const track of deletedTracks) {
+      await this.deleteFile({ id: track.id });
+      this.tracks = this.tracks.filter((el) => el.id !== track.id);
+      logger().success(`\n ${track.path} deleted successfully`);
+    }
+  }
+
+  private async backupInserts(newTracks: string[], isPublic: boolean, tags: string[]) {
+    logger().info('\n Syncing inserts');
+    for (const track of newTracks) {
+      const { id } = await this.createFile({ path: track, isPublic, tags });
+      this.tracks.push({ id, path: track });
+      logger().success(`\n ${track} created successfully`);
+    }
+  }
+
+  private async createDir(data: { path: string; isPublic: boolean; tags: string[] }) {
+    const { path, isPublic, tags } = data;
+    if (!(await fsExtra.exists(path))) {
+      throw new Error(`Directory does not exist: ${path}`);
+    }
 
     const entries = await readdir(path, { withFileTypes: true });
     for (const entry of entries) {
-      if (ignore.includes(entry.name)) continue;
-
       if (entry.isFile()) {
         const fullPath = Path.join(path, entry.name);
         await this.createFile({ path: fullPath, isPublic, tags });
-        logger().success(`\n ${entry.name} created successfully`);
+        logger().success(`\n ${fullPath} created successfully`);
       }
     }
   }
 
-  private async createFile(data: { path: string; isPublic: boolean; tags: string[] }): Promise<void> {
+  private async createFile(data: { path: string; isPublic: boolean; tags: string[] }) {
     const { path, isPublic, tags } = data;
 
-    if (this.existsInTracks(path)) throw new Error(`File is already tracked: ${path}`);
-
-    const exists = await fsExtra.exists(path);
-    if (!exists) throw new Error(`File does not exist: ${path}`);
+    if (!(await fsExtra.exists(path))) {
+      throw new Error(`File does not exist: ${path}`);
+    }
 
     const stat = await getFileInfo(path);
-    if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error(`File exceeds maximum size: ${path}`);
+    if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) {
+      throw new Error(`File exceeds maximum size: ${path}`);
+    }
 
     const formData = new FormData();
     const file = await pathToFile(path, stat.fileName, stat.mimeType);
@@ -120,26 +184,28 @@ export class ActionsExecuter {
     formData.append('isPublic', String(isPublic));
     tags.forEach((tag) => formData.append('tags', tag));
 
-    const { data: response } = await axios.post<FileEntry>(`${this.config.host}/files/create`, formData, {
-      headers: { Authorization: `Bearer ${this.config.key}` },
-    });
-
-    this.tracks.push({ path, id: response.id });
+    const { data: entry } = await this.axios.post<FileEntry>('/files/create', formData);
+    return entry;
   }
 
   private async updateFile(data: { id: string; path?: string; name?: string; tags?: string[] }) {
     const { id, path, name, tags } = data;
 
-    if (!path && !tags && !name) throw new Error('At least one file property must be updated');
+    if (!path && !tags && !name) {
+      throw new Error('At least one file property must be updated');
+    }
 
     const formData = new FormData();
 
     if (path) {
-      const exists = await fsExtra.exists(path);
-      if (!exists) throw new Error(`File does not exist: ${path}`);
+      if (!(await fsExtra.exists(path))) {
+        throw new Error(`File does not exist: ${path}`);
+      }
 
       const stat = await getFileInfo(path);
-      if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) throw new Error('File exceeds maximum allowed size');
+      if (byteToMega(stat.size) > this.apiInfo.MAX_FILE_SIZE) {
+        throw new Error('File exceeds maximum allowed size');
+      }
 
       const file = await pathToFile(path, stat.fileName, stat.mimeType);
       formData.append('file', file);
@@ -148,31 +214,24 @@ export class ActionsExecuter {
     if (name) formData.append('name', name);
     if (tags) tags.forEach((tag) => formData.append('tags', tag));
 
-    await axios.put(`${this.config.host}/files/update/${id}`, formData, {
-      headers: { Authorization: `Bearer ${this.config.key}` },
-    });
+    await this.axios.put(`/files/update/${id}`, formData);
   }
 
-  private async deleteFile(data: { id: string }): Promise<void> {
-    const { id } = data;
-
-    await axios.delete(`${this.config.host}/files/delete/${id}`, {
-      headers: { Authorization: `Bearer ${this.config.key}` },
-    });
-
-    this.tracks = this.tracks.filter((track) => track.id !== id);
+  private async deleteFile(data: { id: string }) {
+    await this.axios.delete(`/files/delete/${data.id}`);
   }
 
-  private handleError(error: unknown, action: string): void {
+  private handleError(error: unknown, action: string) {
     if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-      if (status === 403) logger().error(`Insufficient permissions for ${action}`);
-      else if (status === 404) logger().error(`Resource not found for ${action}`);
-      else if (status === 429) logger().error('Rate limits reached');
-      else if (status === 400) {
-        const errorMessage = (error.response?.data as { errors: { message: string }[] }).errors.map((err) => err.message).join('\n');
-        logger().error(errorMessage);
-      } else logger().error(`API error during ${action}`);
+      const status = error.response?.status || 500;
+      const errorMap: Record<number, string> = {
+        500: 'Service unavailable',
+        403: `Insufficient permissions for ${action}`,
+        404: `Resource not found for ${action}`,
+        429: `Rate limits reached during ${action}`,
+        400: (error.response?.data as { errors: { message: string }[] }).errors.map((err) => err.message).join('\n'),
+      };
+      logger().error(errorMap[status] || `API error during ${action}`);
     } else if (error instanceof Error) {
       logger().error(`Error during ${action}: ${error.message}`);
     } else {

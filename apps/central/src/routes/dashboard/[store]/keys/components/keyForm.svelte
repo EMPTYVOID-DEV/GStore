@@ -17,7 +17,7 @@
 		{ text: 'create', checked: false },
 		{ text: 'update', checked: false },
 		{ text: 'delete', checked: false },
-		{ text: 'list-files', checked: false },
+		{ text: 'access-metadata', checked: false },
 		{ text: 'apply-transformation', checked: false }
 	];
 

@@ -1,5 +1,13 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { createFileRoute, deleteFileRoute, listStoreFilesRoute, readTagsRoute, readFileRoute, updateFileRoute } from './files.dal';
+import {
+  createFileRoute,
+  deleteFileRoute,
+  listStoreFilesRoute,
+  readTagsRoute,
+  readFileRoute,
+  updateFileRoute,
+  searchFileRoute,
+} from './files.dal';
 import {
   createFileHandler,
   deleteFileHandler,
@@ -7,6 +15,7 @@ import {
   readTagsHandler,
   readFileHandler,
   updateFileHandler,
+  searchFileHandler,
 } from './files.handlers';
 import { zodHook } from '@middlewares/zodHook';
 
@@ -23,5 +32,7 @@ route.openapi(listStoreFilesRoute, listStoreFilesHandler);
 route.openapi(deleteFileRoute, deleteFileHandler);
 
 route.openapi(updateFileRoute, updateFileHandler);
+
+route.openapi(searchFileRoute, searchFileHandler);
 
 export default route;

@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
-import { generateSchemaCommand } from './commands/generateSchema.js';
-import { syncCommand } from './commands/sync.js';
-import type { CommandName, SyncOptions } from './shared/types.js';
-import { errorExit } from './shared/utils.js';
+import { generateSchemaCommand } from '@commands/generateSchema.js';
+import { syncCommand } from '@commands/sync.js';
+import type { CommandName, SyncOptions } from '@shared/types.js';
+import { errorExit } from '@shared/utils.js';
 import { Command } from 'commander';
 
 export async function main() {
