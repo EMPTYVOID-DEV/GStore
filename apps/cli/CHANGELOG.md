@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.0
+
+### Minor Changes
+
+- bb9a0a0: Adding backup action
+
 ## 1.1.0
 
 ### Minor Changes
