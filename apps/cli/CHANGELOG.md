@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.2
+
+### Patch Changes
+
+- 2ddf92b: Fixing the readme not showing up
+
 ## 1.2.1
 
 ### Batch Changes

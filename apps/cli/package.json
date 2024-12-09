@@ -1,6 +1,6 @@
 {
   "name": "@gstore-org/cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "This is the GStore cli used for automated tasks.",
   "type": "module",
   "scripts": {
