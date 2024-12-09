@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.3
+
+### Patch Changes
+
+- a30245c: adding homapage to cli package.json to link to the readme
+
 ## 1.2.2
 
 ### Patch Changes
