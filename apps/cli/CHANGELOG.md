@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.1
+
+### Batch Changes
+
+- 8aa5994: bumping version to fix publishing to npm
+
 ## 1.2.0
 
 ### Minor Changes
