@@ -1,5 +1,13 @@
 # @gstore/api
 
+## 1.4.0
+
+### Minor Changes
+
+- fb1d15c: Adjusting list endpoint to adopt the change of permission from list-files to access-metadata
+
+  Adding another api endpoint 'search' which searches for a file given the id.
+
 ## 1.3.0
 
 ### Minor Changes
