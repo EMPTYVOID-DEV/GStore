@@ -1,14 +1,5 @@
 # @gstore/central
 
-## 2.2.0
-
-### Minor Changes
-
-- e078f2d: Changing list-files permission to access-metadata , this will encapsulate all storage operations that fetch files informations from db. For now we
-  it contains list and search endpoints.
-
-  Adding another api endpoint 'search' which searches for a file given the id.
-
 ## 2.1.0
 
 ### Minor Changes
