@@ -1,11 +1,5 @@
 # @gstore/central
 
-## 2.2.0
-
-### Minor Changes
-
-- fb1d15c: Adjusting the ui to adopt the change of permission from list-files to access-metadata
-
 ## 2.1.0
 
 ### Minor Changes

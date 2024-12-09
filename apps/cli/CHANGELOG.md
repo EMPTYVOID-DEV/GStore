@@ -1,11 +1,5 @@
 # @gstore-org/cli
 
-## 1.2.0
-
-### Minor Changes
-
-- fb1d15c: Adding backup action
-
 ## 1.1.0
 
 ### Minor Changes
