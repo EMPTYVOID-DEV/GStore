@@ -2,6 +2,7 @@
   "name": "@gstore-org/cli",
   "version": "1.2.2",
   "description": "This is the GStore cli used for automated tasks.",
+  "homepage": "https://github.com/EMPTYVOID-DEV/GStore/blob/master/apps/cli/README.md",
   "type": "module",
   "scripts": {
     "dev": "tsup > /dev/null && node ./dist/index.js",
