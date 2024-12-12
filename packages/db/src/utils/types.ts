@@ -1,8 +1,6 @@
 import type { sessionTable, userTable, storeTable, apiKeyTable, fileTable } from './schema.js';
 
-export type Permissions = 'create' | 'read' | 'delete' | 'update' | 'list-files' | 'apply-transformation';
-
-export type Operations = 'create' | 'read' | 'delete' | 'update' | 'apply-transformation';
+export type Permissions = 'create' | 'read' | 'delete' | 'update' | 'access-metadata' | 'apply-transformation';
 
 export type Session = typeof sessionTable.$inferSelect;
 

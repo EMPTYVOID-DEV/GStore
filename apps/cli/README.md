@@ -7,7 +7,7 @@
 1. **JSON-Based Configuration**:  
    Easily configure the CLI with a JSON file to declare the API key, API host, and actions to execute.
 2. **File Tracking** _(Optional)_:  
-   Prevent duplicate file creations by specifying a `trackingFile` in your configuration. The CLI will track file paths and their corresponding remote IDs.
+   Backup action utilize a tracking file that links GStore file ids and local paths. Further changes on the local directory get mapped to GStore.
 
 3. **Input Validation with Zod**:  
    All input files and configurations are validated using Zod, ensuring correctness and preventing errors.
@@ -45,6 +45,7 @@ The CLI focuses on actions that are most useful for automation, leaving out acti
 - **`createDir`**: Upload all files within a specified directory.
 - **`delete`**: Delete a file by its remote ID.
 - **`update`**: Update an existing file.
+- **`backup`**: This action syncs the files of a local directory to the GStore by utilizing the tracking file.
 
 ## **Getting Started**
 

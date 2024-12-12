@@ -1,5 +1,5 @@
 import { createRoute } from '@hono/zod-openapi';
-import { createSchema, listSchema, readTagsSchema, updateSchema, indexParamSchema } from './files.schema';
+import { createSchema, listSchema, readTagsSchema, updateSchema, indexParamSchema, searchReturnSchema } from './files.schema';
 import getAuthorizationMiddleware from '@middlewares/authorizationMiddleware';
 import { idParamSchema, zodErrorSchema } from '@shared/schema.global';
 import { selectFileSchema } from 'db';
@@ -170,8 +170,46 @@ export const listStoreFilesRoute = createRoute({
       description: 'Invalid query parameters',
     },
   },
-  middleware: [getAuthorizationMiddleware('list-files')],
+  middleware: [getAuthorizationMiddleware('access-metadata')],
   description: 'Retrieves a paginated list of file metadata from the store.',
+});
+
+export const searchFileRoute = createRoute({
+  tags: ['files'],
+  method: 'get',
+  path: '/search/{id}',
+  request: {
+    params: idParamSchema,
+  },
+  responses: {
+    200: {
+      description: 'Api returns a boolean.',
+      content: {
+        'application/json': {
+          schema: searchReturnSchema,
+        },
+      },
+    },
+    403: {
+      description: 'Insufficient permissions',
+    },
+    404: {
+      description: 'File not found',
+    },
+    401: {
+      description: 'Missing valid authorization credentials',
+    },
+    400: {
+      content: {
+        'application/json': {
+          schema: zodErrorSchema,
+        },
+      },
+      description: 'Invalid query parameters',
+    },
+  },
+  middleware: [getAuthorizationMiddleware('access-metadata')],
+  description: 'This is checks whether a file with given id exists in the store.',
 });
 
 export const deleteFileRoute = createRoute({

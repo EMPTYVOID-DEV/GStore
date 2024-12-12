@@ -1,7 +1,7 @@
-import { loadJson, validateSchema } from '../shared/utils.js';
-import { configSchema } from '../shared/zodSchemas.js';
-import type { SyncOptions, ConfigJson } from '../shared/types.js';
-import { ActionsExecuter } from '../helpers/actionsExecuter.js';
+import { loadJson, validateSchema } from '@shared/utils.js';
+import { configSchema } from '@shared/zodSchemas.js';
+import type { SyncOptions, ConfigJson } from '@shared/types.js';
+import { ActionsExecuter } from '@helpers/actionsExecuter.js';
 
 export async function syncCommand(options: SyncOptions) {
   const config = await loadJson(options.configPath, 'Config');

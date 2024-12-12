@@ -1,50 +1,61 @@
 import { z } from 'zod';
 
-export const idSchema = z
+const idSchema = z
   .string({ message: 'Id is a string' })
   .min(8, { message: 'Id must be 8 characters' })
   .max(8, { message: 'Id must be 8 characters' });
+
+const dirPathSchema = z.string({ message: 'Directory path is required and must be a string' }).refine((path) => path.endsWith('/'), {
+  message: 'Directory path must end with a "/"',
+});
+
+const filePathSchema = z.string({ message: 'File path is required and must be a string' }).refine((path) => !path.endsWith('/'), {
+  message: 'File path must not end with a "/"',
+});
+
+const isPublicSchema = z.boolean({ message: 'isPublic must be a boolean' });
+
+const tagsSchema = z.string({ message: 'Tags must be strings' }).array();
 
 export const actionsSchema = z.discriminatedUnion('name', [
   z.object({
     name: z.literal('create'),
     data: z.object({
-      path: z.string({ message: 'File path is required and must be a string' }).refine((path) => !path.endsWith('/'), {
-        message: 'File path must not end with a "/"',
-      }),
-      isPublic: z.boolean({ message: 'isPublic must be a boolean' }),
-      tags: z.string({ message: 'Tags must be strings' }).array().default([]),
+      path: filePathSchema,
+      isPublic: isPublicSchema,
+      tags: tagsSchema.default([]),
     }),
   }),
   z.object({
     name: z.literal('createDir'),
     data: z.object({
-      path: z.string({ message: 'Directory path is required and must be a string' }).refine((path) => path.endsWith('/'), {
-        message: 'Directory path must end with a "/"',
-      }),
-      isPublic: z.boolean({ message: 'isPublic must be a boolean' }),
-      tags: z.string({ message: 'Tags must be strings' }).array().default([]),
-      ignore: z.string().array().describe('This specifies the ignored sub directories').default([]),
+      path: dirPathSchema,
+      isPublic: isPublicSchema,
+      tags: tagsSchema.default([]),
     }),
   }),
   z.object({
     name: z.literal('update'),
     data: z.object({
       id: idSchema,
-      path: z
-        .string({ message: 'File Path must be a string' })
-        .refine((path) => !path.endsWith('/'), {
-          message: 'File path must not end with a "/"',
-        })
-        .optional(),
-      name: z.string({ message: 'Name must be a string' }).optional(),
-      tags: z.string({ message: 'Tags must be strings' }).array().optional(),
+      path: filePathSchema.optional(),
+      tags: tagsSchema.optional(),
+      name: z.string().optional(),
     }),
   }),
   z.object({
     name: z.literal('delete'),
     data: z.object({
       id: idSchema,
+    }),
+  }),
+  z.object({
+    name: z.literal('backup'),
+    data: z.object({
+      path: dirPathSchema,
+      isPublic: isPublicSchema,
+      tags: tagsSchema.default([]),
+      skipChecking: z.boolean({ message: 'This tells the cli to skip checking whether the tracked files were not deleted' }).default(false),
     }),
   }),
 ]);

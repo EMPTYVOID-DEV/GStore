@@ -1,5 +1,29 @@
 # @gstore-org/cli
 
+## 1.2.3
+
+### Patch Changes
+
+- a30245c: adding homapage to cli package.json to link to the readme
+
+## 1.2.2
+
+### Patch Changes
+
+- 2ddf92b: Fixing the readme not showing up
+
+## 1.2.1
+
+### Batch Changes
+
+- 8aa5994: bumping version to fix publishing to npm
+
+## 1.2.0
+
+### Minor Changes
+
+- bb9a0a0: Adding backup action
+
 ## 1.1.0
 
 ### Minor Changes

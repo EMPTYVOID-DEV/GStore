@@ -1,4 +1,4 @@
-import { configSchema, tracksSchema } from '../shared/zodSchemas.js';
+import { configSchema, tracksSchema } from '@shared/zodSchemas.js';
 import path from 'path';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import fsExtra from 'fs-extra';
