@@ -5,7 +5,6 @@ import fsExtra from 'fs-extra';
 import type { ApiInfo, ApiKey, ConfigJson, FileEntry, TracksJson } from '@shared/types.js';
 import { pathToFile, byteToMega, errorExit, getFileInfo, loadJson, logger, validateSchema } from '@shared/utils.js';
 import { tracksSchema } from '@shared/zodSchemas.js';
-import ora from 'ora';
 
 export class ActionsExecuter {
   private config: ConfigJson;
@@ -28,10 +27,11 @@ export class ActionsExecuter {
 
   async loadTrackingFile() {
     if (!this.config.trackingFile) return;
-    const tracks = await loadJson(this.config.trackingFile, 'Tracking');
-    const parsedTracks = validateSchema<TracksJson>(tracks, tracksSchema);
+    const json = await loadJson(this.config.trackingFile, 'Tracking');
+    const parsedTracks = validateSchema<TracksJson>(json, tracksSchema);
     this.tracking = true;
     this.tracks = parsedTracks.tracks;
+    await this.refreshTrackedFiles();
   }
 
   async flashTracks() {
@@ -40,21 +40,23 @@ export class ActionsExecuter {
   }
 
   async verifyKey() {
+    logger().info('Verifying the api key');
     try {
       const { data } = await this.axios.get<ApiKey>(`/info/key-info/${this.config.key}`);
       if (new Date() >= new Date(data.expiresAt)) {
         errorExit('Key expired');
       }
-      logger().info(`Key name: ${data.name}, Store: ${data.storeId}, Permissions: ${data.permissions.join(', ')}`);
+      logger().success(`Key name: ${data.name}, Store: ${data.storeId}, Permissions: ${data.permissions.join(', ')}`);
     } catch (error) {
       this.handleError(error, 'Verifying api key');
     }
   }
 
   async fetchApiInfo() {
+    logger().info('Fetching api key information');
     try {
       const { data } = await this.axios.get<ApiInfo>('/info/api-info');
-      logger().info(`Rate Limits: ${data.RATE_LIMITS}, Window: ${data.RATE_WINDOW}ms, Max File Size: ${data.MAX_FILE_SIZE}MB`);
+      logger().success(`Rate Limits: ${data.RATE_LIMITS}, Window: ${data.RATE_WINDOW}ms, Max File Size: ${data.MAX_FILE_SIZE}MB`);
       this.apiInfo = data;
     } catch (error) {
       this.handleError(error, 'Fetching api info');
@@ -64,7 +66,7 @@ export class ActionsExecuter {
   async execute() {
     const { actions } = this.config;
     for (const actionName in actions) {
-      const spinner = ora(`Executing ${actionName}`).start();
+      logger().info(`Executing ${actionName}`);
       try {
         const actionContext = actions[actionName];
         switch (actionContext.name) {
@@ -84,70 +86,34 @@ export class ActionsExecuter {
             await this.backup(actionContext.data);
             break;
         }
-        spinner.succeed(`${actionName} executed successfully`);
+        logger().success(`${actionName} executed successfully`);
       } catch (error) {
-        spinner.fail(`${actionName} failed`);
+        logger().error(`${actionName} failed`);
         this.handleError(error, actionName);
       }
     }
   }
 
-  private async refreshTrackedFiles() {
-    const updatedTracks = [];
-    for (const track of this.tracks) {
-      const { data } = await this.axios.get<{ exists: boolean }>(`/files/search/${track.id}`);
-      if (data.exists) {
-        updatedTracks.push(track);
-      }
-    }
-    this.tracks = updatedTracks;
-  }
-
-  private diffTracks(local: string[]) {
-    return {
-      newTracks: local.filter((path) => !this.tracks.find((el) => el.path === path)),
-      deletedTracks: this.tracks.filter((track) => !local.includes(track.path)),
-    };
-  }
-
-  private async backup(data: { path: string; isPublic: boolean; tags: string[]; skipChecking: boolean }) {
+  private async backup(data: { path: string; isPublic: boolean; tags: string[] }) {
     if (!this.tracking) {
       throw new Error('Tracking file is not specified, skipping the action...');
     }
 
-    const { path, isPublic, tags, skipChecking } = data;
+    const { path, isPublic, tags } = data;
     if (!(await fsExtra.exists(path))) {
       throw new Error(`Directory does not exist: ${path}`);
     }
 
-    if (!skipChecking) {
-      await this.refreshTrackedFiles();
-    }
+    const entries = await readdir(path, { withFileTypes: true }).then((entry) =>
+      entry.filter((el) => el.isFile()).map((el) => Path.join(path, el.name)),
+    );
 
-    const localEntries = (await readdir(path, { withFileTypes: true })).filter((el) => el.isFile()).map((el) => Path.join(path, el.name));
+    const relatedTracks = this.tracks.filter((el) => el.path.startsWith(path));
 
-    const { deletedTracks, newTracks } = this.diffTracks(localEntries);
+    const { deletedTracks, newTracks } = this.diffRemoteLocal(relatedTracks, entries);
 
     await this.backupDeletes(deletedTracks);
     await this.backupInserts(newTracks, isPublic, tags);
-  }
-
-  private async backupDeletes(deletedTracks: TracksJson['tracks']) {
-    logger().info('\n Syncing deletes');
-    for (const track of deletedTracks) {
-      await this.deleteFile({ id: track.id });
-      this.tracks = this.tracks.filter((el) => el.id !== track.id);
-      logger().success(`\n ${track.path} deleted successfully`);
-    }
-  }
-
-  private async backupInserts(newTracks: string[], isPublic: boolean, tags: string[]) {
-    logger().info('\n Syncing inserts');
-    for (const track of newTracks) {
-      const { id } = await this.createFile({ path: track, isPublic, tags });
-      this.tracks.push({ id, path: track });
-      logger().success(`\n ${track} created successfully`);
-    }
   }
 
   private async createDir(data: { path: string; isPublic: boolean; tags: string[] }) {
@@ -161,7 +127,7 @@ export class ActionsExecuter {
       if (entry.isFile()) {
         const fullPath = Path.join(path, entry.name);
         await this.createFile({ path: fullPath, isPublic, tags });
-        logger().success(`\n ${fullPath} created successfully`);
+        logger().success(`${fullPath} created successfully`);
       }
     }
   }
@@ -221,6 +187,46 @@ export class ActionsExecuter {
     await this.axios.delete(`/files/delete/${data.id}`);
   }
 
+  private async refreshTrackedFiles() {
+    const updatedTracks = [];
+    for (const track of this.tracks) {
+      try {
+        const { data } = await this.axios.get<{ exists: boolean }>(`/files/search/${track.id}`);
+        if (data.exists) {
+          updatedTracks.push(track);
+        }
+      } catch (error) {
+        this.handleError(error, 'Refreshing tracked files');
+      }
+    }
+    this.tracks = updatedTracks;
+  }
+
+  private diffRemoteLocal(remote: TracksJson['tracks'], local: string[]) {
+    return {
+      newTracks: local.filter((path) => !remote.find((el) => el.path === path)),
+      deletedTracks: remote.filter((track) => !local.includes(track.path)),
+    };
+  }
+
+  private async backupDeletes(deletedTracks: TracksJson['tracks']) {
+    logger().info('1-Syncing deletes');
+    for (const track of deletedTracks) {
+      await this.deleteFile({ id: track.id });
+      this.tracks = this.tracks.filter((el) => el.id !== track.id);
+      logger().success(`${track.path} deleted successfully`);
+    }
+  }
+
+  private async backupInserts(newTracks: string[], isPublic: boolean, tags: string[]) {
+    logger().info('2-Syncing inserts');
+    for (const track of newTracks) {
+      const { id } = await this.createFile({ path: track, isPublic, tags });
+      this.tracks.push({ id, path: track });
+      logger().success(`${track} created successfully`);
+    }
+  }
+
   private handleError(error: unknown, action: string) {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status || 500;
@@ -229,7 +235,7 @@ export class ActionsExecuter {
         403: `Insufficient permissions for ${action}`,
         404: `Resource not found for ${action}`,
         429: `Rate limits reached during ${action}`,
-        400: (error.response?.data as { errors: { message: string }[] }).errors.map((err) => err.message).join('\n'),
+        400: `Api validation error during ${action}`,
       };
       logger().error(errorMap[status] || `API error during ${action}`);
     } else if (error instanceof Error) {
