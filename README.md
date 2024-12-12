@@ -83,6 +83,8 @@ gstore/
    docker-compose -f docker/docker-compose.yml --env-file=.env up -d
    ```
 
+   For testing run the docker-compose.dev.yml which uses http.
+
 ### For Deployment
 
 - Ensure your server is configured with a public domain.
