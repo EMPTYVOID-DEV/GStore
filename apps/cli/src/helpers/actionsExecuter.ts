@@ -104,13 +104,16 @@ export class ActionsExecuter {
       throw new Error(`Directory does not exist: ${path}`);
     }
 
-    const entries = await readdir(path, { withFileTypes: true }).then((entry) =>
+    const directoryFiles = await readdir(path, { withFileTypes: true }).then((entry) =>
       entry.filter((el) => el.isFile()).map((el) => Path.join(path, el.name)),
     );
 
-    const relatedTracks = this.tracks.filter((el) => el.path.startsWith(path));
+    const directoryTracks = this.tracks.filter((el) => {
+      const reconstructedPath = Path.join(path, Path.basename(el.path));
+      return reconstructedPath == el.path;
+    });
 
-    const { deletedTracks, newTracks } = this.diffRemoteLocal(relatedTracks, entries);
+    const { deletedTracks, newTracks } = this.diffRemoteLocal(directoryTracks, directoryFiles);
 
     await this.backupDeletes(deletedTracks);
     await this.backupInserts(newTracks, isPublic, tags);
