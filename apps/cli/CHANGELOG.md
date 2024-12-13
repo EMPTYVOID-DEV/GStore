@@ -1,5 +1,11 @@
 # @gstore-org/cli
 
+## 1.2.5
+
+### Patch Changes
+
+- dbdf0b2: Fixing backup action to extract directory tracks the right way
+
 ## 1.2.4
 
 ### Patch Changes
