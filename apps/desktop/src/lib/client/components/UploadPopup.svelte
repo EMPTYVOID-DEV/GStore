@@ -4,9 +4,12 @@
 	import { Label } from '$client/components/ui/label';
 	import { Checkbox } from '$client/components/ui/checkbox';
 	import { enhance } from '$app/forms';
+    import { RefreshCcw } from 'lucide-svelte';
 
 	export let isVisible: boolean;
 	export let onClose: () => void;
+	export let action: string;
+	console.log(action)
 	export let form
 	
 	let formLoading: boolean = false;
@@ -19,19 +22,19 @@
 </script>
 
 {#if isVisible}
-	<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+	<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex justify-center items-center">
 		<div class="bg-white rounded shadow-lg p-6 w-full max-w-md">
 			<h2 class="text-xl font-bold mb-4">Upload File</h2>
 			<form 
 				method="POST" 
 				enctype="multipart/form-data" 
-				action="?/upload"
+				action={`?/${action}`}
 				class="space-y-4"
 				use:enhance={() => {
 					formLoading = true;
 					return async ({ update }) => {
 						formLoading = false;
-						update();
+						update()
 					};
 				}}
 			>
@@ -41,7 +44,7 @@
 				</div>
 
 				<div class="flex items-center space-x-2">
-					<Checkbox name="isPublic" id="isPublic" />
+					<input type="checkbox" value="isPublic" name="isPublic" id="isPublic" />
 					<Label for="isPublic">Make Public</Label>
 				</div>
 
@@ -61,7 +64,7 @@
 					</Button>
 					<Button 
 						type="submit" 
-						disabled={formLoading} 
+						disabled={formLoading}
 						class="w-1/2 bg-black hover:bg-neutral-800 transition py-3 text-white hover:text-white rounded-md"
 					>
 						{#if formLoading}
