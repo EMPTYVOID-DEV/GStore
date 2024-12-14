@@ -55,7 +55,6 @@ export const actionsSchema = z.discriminatedUnion('name', [
       path: dirPathSchema,
       isPublic: isPublicSchema,
       tags: tagsSchema.default([]),
-      skipChecking: z.boolean({ message: 'This tells the cli to skip checking whether the tracked files were not deleted' }).default(false),
     }),
   }),
 ]);
