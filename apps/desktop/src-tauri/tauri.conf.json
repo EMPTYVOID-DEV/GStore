@@ -4,10 +4,10 @@
     "beforeBuildCommand": "pnpm run build",
     "beforeDevCommand": "pnpm run dev",
     "devPath": "http://localhost:5173",
-    "distDir": ".."
+    "distDir": "../build"
   },
   "package": {
-    "productName": "GStore",
+    "productName": "gstore-desktop",
     "version": "0.1.0"
   },
   "tauri": {
@@ -58,7 +58,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "GStore",
+        "title": "gstore-desktop",
         "width": 800
       }
     ]
