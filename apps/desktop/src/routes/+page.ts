@@ -1,7 +1,11 @@
+import type { ApiKey } from "$shared/types";
 import type { Load } from "@sveltejs/kit";
 import { load as tauriLoad } from "@tauri-apps/plugin-store";
 
 export const load: Load = async () => {
-  const store = await tauriLoad("keys.json", { autoSave: true });
-  return { store };
+  const keysStore = await tauriLoad("keys.json", { autoSave: true });
+  const settingsStore = await tauriLoad("settings.json", { autoSave: true });
+  const hostUrl = (await settingsStore.get<string>("hostUrl")) || "";
+  const apiKeys = (await keysStore.get<ApiKey[]>("keys")) || [];
+  return { keysStore, settingsStore, apiKeys, hostUrl };
 };

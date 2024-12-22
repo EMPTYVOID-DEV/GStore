@@ -1,0 +1,104 @@
+<script lang="ts">
+  import type { ApiKey } from "$shared/types";
+  import DeleteIcon from "$icons/deleteIcon.svelte";
+  import type { Store } from "@tauri-apps/plugin-store";
+  import { invalidateAll } from "$app/navigation";
+
+  let { apiKeys, keysStore }: { apiKeys: ApiKey[]; keysStore: Store } =
+    $props();
+
+  async function deleteKey(key: string) {
+    const newKeys = apiKeys.filter((apiKey) => apiKey.key != key);
+    await keysStore.set("keys", newKeys);
+    await invalidateAll();
+  }
+</script>
+
+<div class="keys-container">
+  {#each apiKeys as key}
+    <div class="key-card">
+      <div class="key-header">
+        <div class="key-info">
+          <span>Store Id: {key.storeId}</span>
+          <span>Key Id: {key.id}</span>
+          <span>Key Name: {key.name}</span>
+          <span>Expires: {key.expiresAt}</span>
+        </div>
+
+        <button
+          class="delete-button"
+          aria-label="Delete Key"
+          onclick={() => deleteKey(key.key)}
+        >
+          <DeleteIcon />
+        </button>
+      </div>
+
+      <div class="key-permissions">
+        <h4>Permissions:</h4>
+        <span>{key.permissions.join(", ")}</span>
+      </div>
+    </div>
+  {/each}
+</div>
+
+<style>
+  :is(span, h4) {
+    color: var(--foregroundColor);
+  }
+
+  .keys-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .key-card {
+    background: color-mix(in srgb, var(--primaryColor) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primaryColor) 30%, transparent);
+    border-radius: var(--border-radius);
+  }
+
+  .key-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .key-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease;
+  }
+
+  .delete-button:hover {
+    background-color: color-mix(in srgb, var(--dangerColor) 20%, transparent);
+  }
+
+  .delete-button :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: var(--foregroundColor);
+  }
+
+  .key-permissions {
+    padding: 1rem;
+    border-top: 1px solid
+      color-mix(in srgb, var(--primaryColor) 30%, transparent);
+    background: color-mix(in srgb, var(--primaryColor) 5%, transparent);
+  }
+</style>

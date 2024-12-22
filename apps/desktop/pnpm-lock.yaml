@@ -23,6 +23,15 @@ importers:
       '@tauri-apps/plugin-store':
         specifier: ~2
         version: 2.2.0
+      fp-ts:
+        specifier: ^2.16.9
+        version: 2.16.9
+      svelte-sonner:
+        specifier: ^0.3.28
+        version: 0.3.28(svelte@5.15.0)
+      zod:
+        specifier: ^3.23.8
+        version: 3.24.1
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.6
@@ -491,6 +500,9 @@ packages:
       picomatch:
         optional: true
 
+  fp-ts@2.16.9:
+    resolution: {integrity: sha512-+I2+FnVB+tVaxcYyQkHUq7ZdKScaBlX53A41mxQtpIccsfyv8PzdzP7fzp2AY832T4aoK6UZ5WRX/ebGd8uZuQ==}
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -573,6 +585,11 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
+  svelte-sonner@0.3.28:
+    resolution: {integrity: sha512-K3AmlySeFifF/cKgsYNv5uXqMVNln0NBAacOYgmkQStLa/UoU0LhfAACU6Gr+YYC8bOCHdVmFNoKuDbMEsppJg==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
+
   svelte@5.15.0:
     resolution: {integrity: sha512-YWl8rAd4hSjERLtLvP6h2pflGtmrJwv+L12BgrOtHYJCpvLS9WKp/YNAdyolw3FymXtcYZqhSWvWlu5O1X7tgQ==}
     engines: {node: '>=18'}
@@ -639,6 +656,9 @@ packages:
 
   zimmerframe@1.1.2:
     resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
+
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
 snapshots:
 
@@ -963,6 +983,8 @@ snapshots:
 
   fdir@6.4.2: {}
 
+  fp-ts@2.16.9: {}
+
   fsevents@2.3.3:
     optional: true
 
@@ -1053,6 +1075,10 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
+  svelte-sonner@0.3.28(svelte@5.15.0):
+    dependencies:
+      svelte: 5.15.0
+
   svelte@5.15.0:
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -1091,3 +1117,5 @@ snapshots:
       vite: 6.0.5
 
   zimmerframe@1.1.2: {}
+
+  zod@3.24.1: {}
