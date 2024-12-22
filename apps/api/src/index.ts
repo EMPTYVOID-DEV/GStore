@@ -12,10 +12,13 @@ import infoRoute from '@routes/info/index';
 import { writeToLog } from '@utils/utils.general';
 import storesRoute from '@routes/store/index';
 import { env } from '@shared/env';
+import { cors } from 'hono/cors';
 
 const port = env.PORT;
 
 const app = new OpenAPIHono();
+
+app.use(cors());
 
 app.use(limiter);
 
