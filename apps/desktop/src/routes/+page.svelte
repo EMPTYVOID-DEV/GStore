@@ -60,7 +60,8 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 2%;
+    padding-inline: 2%;
+    padding-block: 3%;
   }
 
   .header {

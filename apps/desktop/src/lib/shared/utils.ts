@@ -36,10 +36,17 @@ export async function tauriFetch(fetch: Promise<Response>, action: string) {
         404: `Resource not found for ${action}`,
         429: `Rate limits reached during ${action}`,
         400: `API validation error during ${action}`,
+        401: `Missing credentials during ${action}`,
       };
       const message =
         errorMap[cause.status] || `HTTP error ${cause.status} during ${action}`;
       return left(message);
-    } else return left("Something went wrong");
+    } else return left(`Something went wrong : ${action}`);
   }
+}
+
+export function createAuthHeader(key: string) {
+  const headers = new Headers();
+  headers.append("authorization", `bearer ${key}`);
+  return headers;
 }
