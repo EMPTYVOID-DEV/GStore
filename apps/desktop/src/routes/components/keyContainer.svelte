@@ -2,7 +2,8 @@
   import type { ApiKey } from "$shared/types";
   import DeleteIcon from "$icons/deleteIcon.svelte";
   import type { Store } from "@tauri-apps/plugin-store";
-  import { invalidateAll } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
+  import RightIcon from "$icons/rightIcon.svelte";
 
   let { apiKeys, keysStore }: { apiKeys: ApiKey[]; keysStore: Store } =
     $props();
@@ -25,13 +26,23 @@
           <span>Expires: {key.expiresAt}</span>
         </div>
 
-        <button
-          class="delete-button"
-          aria-label="Delete Key"
-          onclick={() => deleteKey(key.key)}
-        >
-          <DeleteIcon />
-        </button>
+        <div class="key-actions">
+          <button
+            class="goto"
+            aria-label="Goto Key"
+            onclick={() => goto(`/${key.id}`)}
+          >
+            <RightIcon />
+          </button>
+
+          <button
+            class="delete"
+            aria-label="Delete Key"
+            onclick={() => deleteKey(key.key)}
+          >
+            <DeleteIcon />
+          </button>
+        </div>
       </div>
 
       <div class="key-permissions">
@@ -73,7 +84,13 @@
     gap: 0.5rem;
   }
 
-  .delete-button {
+  .key-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .key-actions button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,14 +102,18 @@
     transition: background-color 0.2s ease;
   }
 
-  .delete-button:hover {
-    background-color: color-mix(in srgb, var(--dangerColor) 20%, transparent);
-  }
-
-  .delete-button :global(svg) {
+  .key-actions button :global(svg) {
     width: 1.5rem;
     height: 1.5rem;
     fill: var(--foregroundColor);
+  }
+
+  .goto:hover {
+    background-color: color-mix(in srgb, var(--primaryColor) 20%, transparent);
+  }
+
+  .delete:hover {
+    background-color: color-mix(in srgb, var(--dangerColor) 20%, transparent);
   }
 
   .key-permissions {

@@ -6,6 +6,7 @@
   import type { ApiKey } from "$shared/types";
   import { showToast, tauriFetch } from "$shared/utils";
   import type { Store } from "@tauri-apps/plugin-store";
+  import { fetch } from "@tauri-apps/plugin-http";
 
   interface Props {
     keysStore: Store;
