@@ -2,11 +2,10 @@
   import { page } from "$app/state";
   import AsyncButton from "$components/button/asyncButton.svelte";
   import StaticInput from "$components/input/staticInput.svelte";
+  import Option from "$components/other/option.svelte";
   import RecordView from "$components/other/recordView.svelte";
   import Tags from "$components/other/tags.svelte";
   import Upload from "$components/other/upload.svelte";
-  import DownIcon from "$icons/downIcon.svelte";
-  import RightIcon from "$icons/rightIcon.svelte";
   import UpdateIcon from "$icons/updateIcon.svelte";
   import { createAuthHeader, showToast, tauriFetch } from "$shared/utils";
 
@@ -43,6 +42,7 @@
     const res = await tauriFetch(promise, "Updating a file");
     if (res._tag == "Left") return showToast("Error", res.left, "danger");
     await handleResult(res.right);
+    showToast("Success", "File updated successfully", "success");
   }
   async function handleResult(res: Response) {
     id = "";
@@ -59,57 +59,27 @@
   on:change={(e) => (id = e.detail.value)}
 />
 
-<div class="option">
-  <div class="head">
-    <button onclick={() => (name.include = !name.include)}>
-      {#if name.include}
-        <DownIcon />
-      {:else}
-        <RightIcon />
-      {/if}
-    </button>
-    <h3>Update name ?</h3>
-  </div>
-  {#if name.include}
+<Option bind:include={name.include} header="Update the name ?">
+  {#snippet hidden()}
     <StaticInput
-      label="New name"
+      label="Name"
       value={name.value}
       on:change={(e) => (name.value = e.detail.value)}
     />
-  {/if}
-</div>
+  {/snippet}
+</Option>
 
-<div class="option">
-  <div class="head">
-    <button onclick={() => (tags.include = !tags.include)}>
-      {#if tags.include}
-        <DownIcon />
-      {:else}
-        <RightIcon />
-      {/if}
-    </button>
-    <h3>Update tags ?</h3>
-  </div>
-  {#if tags.include}
+<Option bind:include={tags.include} header="Update tags ?">
+  {#snippet hidden()}
     <Tags bind:tags={tags.value} />
-  {/if}
-</div>
+  {/snippet}
+</Option>
 
-<div class="option">
-  <div class="head">
-    <button onclick={() => (file.include = !file.include)}>
-      {#if file.include}
-        <DownIcon />
-      {:else}
-        <RightIcon />
-      {/if}
-    </button>
-    <h3>Update file content ?</h3>
-  </div>
-  {#if file.include}
+<Option bind:include={file.include} header="Update the content ?">
+  {#snippet hidden()}
     <Upload bind:file={file.value} />
-  {/if}
-</div>
+  {/snippet}
+</Option>
 
 <AsyncButton
   text="Update a file"
@@ -121,23 +91,3 @@
 {#if result}
   <RecordView record={result} />
 {/if}
-
-<style>
-  .option {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .head {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .head h3 {
-    color: var(--foregroundColor);
-  }
-  .head button {
-    cursor: pointer;
-    display: contents;
-  }
-</style>

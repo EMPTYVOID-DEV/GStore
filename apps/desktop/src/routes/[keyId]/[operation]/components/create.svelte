@@ -26,6 +26,7 @@
     const res = await tauriFetch(promise, "Creating a file");
     if (res._tag == "Left") return showToast("Error", res.left, "danger");
     await handleResult(res.right);
+    showToast("Success", "File created successfully", "success");
   }
 
   async function handleResult(res: Response) {

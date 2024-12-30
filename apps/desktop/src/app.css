@@ -1,6 +1,6 @@
 :root {
-  --body: clamp(1rem, 0.5vi + 0.9rem, 1.5rem);
   --small: clamp(0.8rem, 0.4vi + 0.7rem, 1.2rem);
+  --body: clamp(1rem, 0.5vi + 0.9rem, 1.5rem);
   --h4: clamp(1.3rem, 0.7vi + 1.1rem, 2rem);
   --h3: clamp(1.6rem, 1vi + 1.3rem, 2.5rem);
   --h2: clamp(2rem, 1.4vi + 1.6rem, 3.3rem);
@@ -25,4 +25,52 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+:where(h1, h2, h3, h4) {
+  font-family: var(--headerFont);
+  font-weight: bold;
+}
+h1 {
+  font-size: var(--h1);
+  line-height: var(--lh1);
+}
+h2 {
+  font-size: var(--h2);
+  line-height: var(--lh2);
+}
+h3 {
+  font-size: var(--h3);
+  line-height: var(--lh3);
+}
+h4 {
+  font-size: var(--h4);
+  line-height: var(--lh4);
+}
+
+:where(label, code, span, li, p, i, a) {
+  font-family: var(--bodyFont);
+  font-size: var(--body);
+  font-weight: 400;
+  line-height: var(--lbody);
+}
+
+*::-webkit-scrollbar {
+  width: 0.7rem;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: var(--backgroundColor);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--mutedColor);
 }

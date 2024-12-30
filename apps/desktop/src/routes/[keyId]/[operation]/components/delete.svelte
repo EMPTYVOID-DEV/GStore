@@ -15,6 +15,7 @@
     const res = await tauriFetch(promise, "Deleting a file");
     if (res._tag == "Left") return showToast("Error", res.left, "danger");
     await handleResult(res.right);
+    showToast("Success", "File deleted successfully", "success");
   }
 
   async function handleResult(res: Response) {
@@ -32,8 +33,8 @@
 <AsyncButton
   text="Delete a file"
   action={deleteFile}
-  --width="100%"
   icon={DeleteIcon}
+  --width="100%"
 />
 
 {#if result}

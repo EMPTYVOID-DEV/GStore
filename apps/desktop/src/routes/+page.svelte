@@ -2,14 +2,11 @@
   import DefaultTabs from "$components/tabs/defaultTabs.svelte";
   import SettingsIcon from "$icons/settingsIcon.svelte";
   import StoreIcon from "$icons/storeIcon.svelte";
-  import { onMount, type Component } from "svelte";
+  import { type Component } from "svelte";
   import { Toaster } from "svelte-sonner";
   import SettingsTab from "./components/settingsTab.svelte";
   import AddKey from "./components/addKey.svelte";
   import KeyContainer from "./components/keyContainer.svelte";
-  import type { ApiKey } from "$shared/types";
-  import { tauriFetch } from "$shared/utils";
-  import { invalidateAll } from "$app/navigation";
 
   let { data } = $props();
   let activeTab = $state(0);
@@ -19,20 +16,6 @@
     { title: "Stores", icon: StoreIcon },
     { title: "Settings", icon: SettingsIcon },
   ];
-
-  onMount(async () => {
-    const validKeys: ApiKey[] = [];
-    for (const storedKey of data.apiKeys) {
-      const url = `${data.hostUrl}/info/key-info/${storedKey.key}`;
-      const res = await tauriFetch(fetch(url), "Adding a new key");
-      if (res._tag == "Left") continue;
-      const apiKey = (await res.right.json()) as ApiKey;
-      if (new Date() >= new Date(apiKey.expiresAt)) continue;
-      validKeys.push(apiKey);
-    }
-    data.keysStore.set("keys", validKeys);
-    await invalidateAll();
-  });
 </script>
 
 <div class="home">

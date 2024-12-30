@@ -6,12 +6,15 @@
   import Delete from "./components/delete.svelte";
   import { Toaster } from "svelte-sonner";
   import Path from "$components/other/path.svelte";
+  import Read from "./components/read.svelte";
+  import List from "./components/list.svelte";
 
-  //@ts-ignore
   const operationsComponents: Map<string, Component> = new Map([
     ["create", Create],
     ["update", Update],
     ["delete", Delete],
+    ["read", Read],
+    ["list", List],
   ]);
   const TOAST_DURATION = 3500;
   const Operation = $derived(operationsComponents.get(page.params.operation))!;

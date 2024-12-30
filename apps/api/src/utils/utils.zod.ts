@@ -1,7 +1,7 @@
 import type { z } from '@hono/zod-openapi';
 
 export function zodStrNumber(str: string, c: z.RefinementCtx) {
-  const idNumber = parseInt(str);
+  const idNumber = Number(str);
   if (isNaN(idNumber))
     c.addIssue({
       message: 'Field must be a number',
