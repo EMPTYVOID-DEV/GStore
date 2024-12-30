@@ -1,5 +1,11 @@
 # @gstore/api
 
+## 1.5.0
+
+### Minor Changes
+
+- ba72fb7: Adding cors support and some adjustments to utilities
+
 ## 1.4.0
 
 ### Minor Changes
