@@ -10,6 +10,6 @@ export const load: Load = async () => {
   return { keysStore, settingsStore, apiKeys, hostUrl };
 };
 
-export const prerender = false;
+export const prerender = "auto";
 
 export const ssr = false;
