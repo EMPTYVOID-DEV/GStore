@@ -7,6 +7,7 @@
   import { showToast, tauriFetch } from "$shared/utils";
   import type { Store } from "@tauri-apps/plugin-store";
   import { fetch } from "@tauri-apps/plugin-http";
+  import { show } from "fp-ts";
 
   interface Props {
     keysStore: Store;
@@ -28,6 +29,7 @@
       return showToast("Error", "Key has expired", "danger");
     await keysStore.set("keys", [...apiKeys, apiKey]);
     await invalidateAll();
+    showToast("Success", "Key added successfully", "success");
   }
 </script>
 

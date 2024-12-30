@@ -4,12 +4,13 @@
   import Path from "$components/other/path.svelte";
   import CreateIcon from "$icons/createIcon.svelte";
   import DeleteIcon from "$icons/deleteIcon.svelte";
+  import ListIcon from "$icons/listIcon.svelte";
+  import ReadIcon from "$icons/readIcon.svelte";
   import UpdateIcon from "$icons/updateIcon.svelte";
   import type { Permissions } from "$shared/types.js";
   import type { Component } from "svelte";
 
   let { data } = $props();
-  // Some operations need more than one permission
   const operationsMap: Map<
     string,
     { icon: Component; requiredPermissions: Permissions[] }
@@ -17,6 +18,8 @@
     ["create", { icon: CreateIcon, requiredPermissions: ["create"] }],
     ["update", { icon: UpdateIcon, requiredPermissions: ["update"] }],
     ["delete", { icon: DeleteIcon, requiredPermissions: ["delete"] }],
+    ["read", { icon: ReadIcon, requiredPermissions: ["read"] }],
+    ["list", { icon: ListIcon, requiredPermissions: ["access-metadata"] }],
   ]);
 </script>
 

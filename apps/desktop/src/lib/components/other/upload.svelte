@@ -17,7 +17,12 @@
 </script>
 
 <div class="upload">
-  <SyncButton text="Upload a File" icon={UploadIcon} on:click={upload} />
+  <SyncButton
+    text="Upload a File"
+    icon={UploadIcon}
+    on:click={upload}
+    --width="100%"
+  />
   {#if file}
     <span class="file-name">{file.name}</span>
   {:else}
@@ -28,8 +33,9 @@
 <style>
   .upload {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .upload span {

@@ -22,6 +22,7 @@
       showToast("Error", isValid.errorMsg, "danger");
     else await settingsStore.set("hostUrl", hostUrl);
     await invalidateAll();
+    showToast("Success", "Api host saved successfully", "success");
   }
 </script>
 

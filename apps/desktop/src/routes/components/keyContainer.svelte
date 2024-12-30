@@ -4,6 +4,7 @@
   import type { Store } from "@tauri-apps/plugin-store";
   import { goto, invalidateAll } from "$app/navigation";
   import RightIcon from "$icons/rightIcon.svelte";
+  import { showToast } from "$shared/utils";
 
   let { apiKeys, keysStore }: { apiKeys: ApiKey[]; keysStore: Store } =
     $props();
@@ -12,6 +13,7 @@
     const newKeys = apiKeys.filter((apiKey) => apiKey.key != key);
     await keysStore.set("keys", newKeys);
     await invalidateAll();
+    showToast("Success", "Key deleted successfully", "success");
   }
 </script>
 

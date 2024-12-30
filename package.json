@@ -7,6 +7,8 @@
     "central-build": "pnpm --filter @gstore-org/central build",
     "cli-dev": "pnpm --filter @gstore-org/cli dev sync",
     "cli-build": "pnpm --filter @gstore-org/cli build",
+    "desktop-dev": "pnpm --filter @gstore-org/desktop tauri-dev",
+    "desktop-build": "pnpm --filter @gstore-org/desktop tauri-build",
     "db-build": "pnpm --filter @gstore-org/db build",
     "build-public": "pnpm run cli-build",
     "version": "changeset version",

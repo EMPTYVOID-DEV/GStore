@@ -124,14 +124,6 @@ gstore/
 3. Generate an API key.
 4. Start using the API.
 
-## Future Enhancements (V2)
-
-- **Advanced Monitoring**: Integration with the ELK stack for comprehensive monitoring and logging.
-- **Scalability**:
-  - Request scaling using KEDA
-  - Support for distributed systems using NFS-based storage
-- **Adapters**: Enable GStore to act as a proxy for various external storage providers.
-
 ## License
 
 This project is licensed under the MIT License. For more details, refer to the [LICENSE](https://opensource.org/license/mit).

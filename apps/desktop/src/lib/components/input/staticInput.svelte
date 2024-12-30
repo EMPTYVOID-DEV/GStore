@@ -39,7 +39,6 @@
   .input-container label {
     font-family: var(--headerFont);
     font-size: var(--body);
-    font-weight: 600;
     color: var(--foregroundColor);
   }
 
