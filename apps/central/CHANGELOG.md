@@ -1,5 +1,11 @@
 # @gstore/central
 
+## 2.2.1
+
+### Patch Changes
+
+- 154d732: Hashing the api key before storing it in db
+
 ## 2.2.0
 
 ### Minor Changes

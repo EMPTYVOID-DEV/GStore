@@ -1,5 +1,11 @@
 # @gstore/api
 
+## 1.5.1
+
+### Patch Changes
+
+- 154d732: hashing the received key before checking the db in authorization middleware
+
 ## 1.5.0
 
 ### Minor Changes
