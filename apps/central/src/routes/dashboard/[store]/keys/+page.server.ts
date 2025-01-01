@@ -3,6 +3,8 @@ import type { Permissions } from 'db';
 import { db, apiKeyTable, and, eq } from 'db';
 import { error, fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { z } from 'zod';
+import { nanoid } from 'nanoid';
+import { sha256Hex } from '$server/utils/general';
 
 export const load: ServerLoad = async ({ params }) => {
 	const storeId = params.store || '';
@@ -51,16 +53,16 @@ export const actions: Actions = {
 			return fail(400, { message: 'Invalid expiration date' });
 		}
 		try {
-			const key = await db
-				.insert(apiKeyTable)
-				.values({
-					name,
-					permissions,
-					expiresAt: expirationDate,
-					storeId
-				})
-				.returning();
-			return key.at(0)?.key;
+			const key = nanoid(32);
+			const hashedKey = sha256Hex(key);
+			await db.insert(apiKeyTable).values({
+				name,
+				permissions,
+				expiresAt: expirationDate,
+				storeId,
+				key: hashedKey
+			});
+			return key;
 		} catch (err) {
 			const parseResult = z.object({ code: z.literal('23505') }).safeParse(err);
 			if (parseResult.success && parseResult.data.code == '23505')

@@ -25,6 +25,8 @@
     const res = await tauriFetch(fetch(url), "Adding a new key");
     if (res._tag == "Left") return showToast("Error", res.left, "danger");
     const apiKey = (await res.right.json()) as ApiKey;
+    // the key in database is hashed
+    apiKey.key = tmpKey;
     if (new Date() >= new Date(apiKey.expiresAt))
       return showToast("Error", "Key has expired", "danger");
     await keysStore.set("keys", [...apiKeys, apiKey]);

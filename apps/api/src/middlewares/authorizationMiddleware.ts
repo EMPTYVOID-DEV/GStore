@@ -2,6 +2,7 @@ import { db, apiKeyTable, eq } from 'db';
 import type { Permissions } from 'db';
 import type { AuthorizationBinding } from '@shared/types.global';
 import { createMiddleware } from 'hono/factory';
+import { sha256 } from 'hono/utils/crypto';
 
 function getAuthorizationMiddleware(permission: Permissions) {
   return createMiddleware<AuthorizationBinding>(async (c, next) => {
@@ -9,8 +10,9 @@ function getAuthorizationMiddleware(permission: Permissions) {
     if (!authorizationHeader) return c.text('API key is required', 401);
 
     const key = authorizationHeader.split(' ')[1];
+    const hashedKey = (await sha256(key)) || '';
     const apiKeyEntry = await db.query.apiKeyTable.findFirst({
-      where: eq(apiKeyTable.key, key),
+      where: eq(apiKeyTable.key, hashedKey),
     });
 
     if (!apiKeyEntry) return c.text('Invalid API key', 401);

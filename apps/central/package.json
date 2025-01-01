@@ -31,9 +31,9 @@
 	},
 	"dependencies": {
 		"@node-rs/argon2": "^1.1.0",
-		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"db": "file:../../packages/db",
+		"nanoid": "^5.0.7",
 		"svelte-sonner": "^0.3.28",
 		"zod": "^3.23.8"
 	}
