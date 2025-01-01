@@ -124,9 +124,16 @@ export async function createFfmpegInstance(
 }
 
 export function writeToLog(message: string, type: 'ERROR' | 'REQUEST') {
-  const logMsg = `Date: ${new Date().toISOString()} , Type: ${type} , Message: ${message} \n\n`;
+  const timestamp = new Date().toISOString();
+  const logEntry = {
+    timestamp,
+    type,
+    message,
+  };
+
+  const formattedLog = JSON.stringify(logEntry, null, 2);
   const logFilePath = path.join(env.ROOT_DIR, '.log');
-  return appendFile(logFilePath, logMsg);
+  return appendFile(logFilePath, formattedLog + '\n');
 }
 
 export function byteToMega(bytes: number) {

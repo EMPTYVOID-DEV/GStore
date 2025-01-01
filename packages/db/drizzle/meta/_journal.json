@@ -8,6 +8,13 @@
       "when": 1732382564935,
       "tag": "0000_nifty_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1735755099537,
+      "tag": "0001_curious_joshua_kane",
+      "breakpoints": true
     }
   ]
 }

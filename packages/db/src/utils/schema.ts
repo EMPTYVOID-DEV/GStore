@@ -41,9 +41,7 @@ export const apiKeyTable = pgTable(
   'apiKey',
   {
     id: serial('id').primaryKey(),
-    key: varchar('key', { length: 32 })
-      .$default(() => nanoid(32))
-      .unique(),
+    key: varchar('key', { length: 64 }).notNull().unique(),
     storeId: varchar('store_id', { length: 8 })
       .notNull()
       .references(() => storeTable.id, { onDelete: 'cascade' }),

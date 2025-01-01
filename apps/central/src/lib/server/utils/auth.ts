@@ -1,10 +1,10 @@
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
-import { sha256 } from '@oslojs/crypto/sha2';
 import { db, sessionTable, userTable, eq } from 'db';
 import type { Session } from 'db';
 import type { SessionValidationResult } from '$server/types.server';
 import type { Cookies } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { sha256Hex } from './general';
 
 export function generateSessionToken(): string {
 	const bytes = new Uint8Array(20);
@@ -18,7 +18,7 @@ export async function createSession(
 	userId: string,
 	expiresAt: Date
 ): Promise<Session> {
-	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const sessionId = encodeHexLowerCase(Uint8Array.from(sha256Hex(token)));
 	const session: Session = {
 		id: sessionId,
 		userId,
@@ -29,7 +29,7 @@ export async function createSession(
 }
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
-	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const sessionId = encodeHexLowerCase(Uint8Array.from(sha256Hex(token)));
 	const result = await db
 		.select({ user: userTable, session: sessionTable })
 		.from(sessionTable)

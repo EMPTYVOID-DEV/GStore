@@ -1,5 +1,6 @@
 import { pathCheckModes } from '$server/const.server';
 import type { PathCheckModes } from '$server/types.server';
+import { createHash } from 'crypto';
 
 export function checkPath(
 	pathname: string,
@@ -14,4 +15,8 @@ export function checkPath(
 		if (mode == 3 && pathname === el) return true;
 	}
 	return false;
+}
+
+export function sha256Hex(input: string): string {
+	return createHash('sha256').update(input).digest('hex');
 }

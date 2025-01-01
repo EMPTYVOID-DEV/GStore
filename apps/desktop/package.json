@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "tauri-dev": "tauri dev",
-    "tauri-build": "tauri build",
+    "tauri-build": "sudo NO_STRIP=true pnpm tauri build --verbose",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
